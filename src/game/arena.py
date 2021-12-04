@@ -29,7 +29,8 @@ def arena(window):
                 elif event.key == pygame.K_RETURN:
                     player_handler.players[0].set_position(0, 0, False)
                     player_handler.players[0].set_speed(0, 0, False)
-                    player_handler.players[0].set_directional_speed(0, False)
+                    player_handler.players[1].set_position(0, 0, False)
+                    player_handler.players[1].set_speed(0, 0, False)
 
             if event.type == pygame.KEYUP:
                 player_handler.update_keyup(event.key)
@@ -37,9 +38,11 @@ def arena(window):
         player_handler.handle_input(delta)
         player_handler.handle_movements(delta)
         player_handler.players[0].update_surface_and_hitbox()
+        player_handler.players[1].update_surface_and_hitbox()
 
-        window.fill((180, 130, 25))
+        window.fill((180, 100, 25))
         window.blit(player_handler.players[0].image, player_handler.players[0].rect)
+        window.blit(player_handler.players[1].image, player_handler.players[1].rect)
 
         player_handler.reset_keys()
         pygame.display.flip()

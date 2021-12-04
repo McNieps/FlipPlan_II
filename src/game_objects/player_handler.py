@@ -1,5 +1,3 @@
-import pygame
-
 from pygame.locals import *
 from src.game_objects.player import Player
 

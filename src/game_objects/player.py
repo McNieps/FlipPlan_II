@@ -1,8 +1,7 @@
 import pygame
-from numpy import array, dot
-from numpy.linalg import norm
 
 from math import radians, sin, cos
+from numpy import dot
 from src.engine.opp import OPP
 
 
@@ -14,15 +13,16 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.va = 0
-        self.directional_speed = 0
         self.friction = 0.80
-        self.catchup_coef = 0.5
+        self.catchup_rate = 0.5
+        self.catchup_loss = 0.8
+        self.catchup_min_speed = 100
 
         # freefall
         self.free_fall = 0
         self.free_fall_length = 1  # sec
 
-        self.opp = OPP(image_type, 0.5)
+        self.opp = OPP(image_type, 4)
         self.image = None
         self.rect = None
         self.mask = None
@@ -62,28 +62,18 @@ class Player:
         else:
             self.vx = vx
             self.vy = vy
-
-    def set_directional_speed(self, speed, increment=False):
-        if increment:
-            self.directional_speed += speed
-        else:
-            self.directional_speed = speed
     # endregion
 
     # region user inputs
     def up_key(self, kdkpku, delta):        # Accelere
         if kdkpku[1]:   # key_pressed
-            self.directional_speed += 100 * delta
+            self.set_speed(500*delta, 0)
 
     def left_key(self, kdkpku, delta):      # Tourne
         if kdkpku[1]:   # key_pressed
             self.set_angle(-180 * delta)
 
     def down_key(self, kdkpku):      # Decroche
-        if kdkpku[0]:   # key_down
-            self.set_speed(self.directional_speed, 0)
-            self.directional_speed = 0
-
         if kdkpku[1]:   # key_pressed
             self.free_fall = self.free_fall_length
 
@@ -93,7 +83,7 @@ class Player:
 
     def use1_key(self, kdkpku, delta):      # Useless pour le moment
         if kdkpku[1]:
-            self.directional_speed -= 10
+            self.set_speed(-10, 0)
 
     def use2_key(self, kdkpku, delta):      # Useless pour le moment
         pass
@@ -104,37 +94,35 @@ class Player:
 
     # region player update
     def update_position_and_angle(self, delta):
-        self.vy += 40*delta
         if self.free_fall:
             self.free_fall -= delta
             if self.free_fall <= 0:
                 self.free_fall = 0
 
+        self.vy += 250 * delta
         self.a += self.va
-        rad = radians(self.a)
-        cosa = cos(rad)
-        sina = sin(rad)
-        dir_speed_x = cosa*self.directional_speed
-        dir_speed_y = sina*self.directional_speed
-        self.x += (self.vx + dir_speed_x) * delta
-        self.y += (self.vy + dir_speed_y) * delta
 
-        if not self.free_fall and (abs(self.vx) > 1 or abs(self.vy) > 1):
-            dir_speed_vec = array([cosa, sina])
-            abs_speed_vec = array([self.vx, self.vy])
-            abs_speed_norm = norm(abs_speed_vec)
+        if not self.free_fall and (abs(self.vx) > 0 or abs(self.vy) > 0):
+            rad = radians(self.a)
+            cosa, sina = cos(rad), sin(rad)
+            dir_vec = [cosa, sina]
 
-            dot_speed = dot(dir_speed_vec, abs_speed_vec/abs_speed_norm)**9
-            value = self.catchup_coef**delta * dot_speed
+            speed_vec = [self.vx, self.vy]
+            speed = (self.vx**2 + self.vy**2)**0.5
 
-            self.directional_speed += abs_speed_norm*value
-            self.vx *= abs(1-abs(value))
-            self.vy *= abs(1-abs(value))
-            print(dot_speed)
+            dot_speed = ((dir_vec[0]*speed_vec[0]+dir_vec[1]*speed_vec[1])/speed)**49
+            value = dot_speed
 
-        self.directional_speed *= self.friction**delta
+            if abs(dot(speed_vec, dir_vec)) > self.catchup_min_speed:
+                new_speed = value * speed * self.catchup_loss**delta
+                self.vx *= 1-abs(value)
+                self.vy *= 1-abs(value)
+                self.set_speed(new_speed, 0)
+
         self.vx *= self.friction**delta
         self.vy *= self.friction**delta
+        self.x += self.vx*delta
+        self.y += self.vy*delta
 
     def update_surface_and_hitbox(self):
         self.opp.set_angle(-self.a, False)
