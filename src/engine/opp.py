@@ -58,3 +58,34 @@ class OPP:
                      (0, self.height - round(self.height * self.cosx)))
         surface.blit(self.rescale_height(self.visible[self.pdv][3], self.sinx), (0, self.height))
         return surface
+
+
+if __name__ == "__main__":
+    import pygame
+
+    marche = True
+    fenetre = pygame.display.set_mode((800, 600))
+    opp = OPP("player", 2)
+    clock = pygame.time.Clock()
+
+    while marche:
+        clock.tick(2400)
+        print(clock.get_fps())
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                marche = False
+        tp = pygame.key.get_pressed()
+
+        if tp[pygame.K_q]:
+            opp.set_angle(0.093)
+        if tp[pygame.K_d]:
+            opp.set_angle(-0.092)
+
+        fenetre.fill((255, 255, 255))
+        fenetre.blit(opp.get_surface(), (20, 20))
+
+        pygame.display.flip()
+    pygame.quit()
+
+
+

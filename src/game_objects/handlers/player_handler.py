@@ -5,6 +5,7 @@ from src.game_objects.player import Player
 class PlayerHandler:
     def __init__(self):
         self.players = []
+        self.number_of_players = 0
 
         # KEYS
         self.players_keys = [K_z, K_q, K_s, K_d, K_i, K_o, K_p,
@@ -24,8 +25,9 @@ class PlayerHandler:
 
     def add_player(self):
         player_number = len(self.players) + 1
-        player_x = 200 + len(self.players)
-        player_y = 300
+        self.number_of_players = player_number
+        player_x = 300 + len(self.players)
+        player_y = 225
         player = Player(player_number, player_x, player_y, "player")
 
         self.players.append(player)
@@ -50,16 +52,17 @@ class PlayerHandler:
             self.key_state[key][2] = True
 
     def handle_input(self, delta):
-        for i in range(2):
-            dictio = self.player_dict_keys[i]
-            self.players[i].up_key(self.key_state[dictio["up"]], delta)
-            self.players[i].left_key(self.key_state[dictio["left"]], delta)
-            self.players[i].down_key(self.key_state[dictio["down"]])
-            self.players[i].right_key(self.key_state[dictio["right"]], delta)
-            self.players[i].use1_key(self.key_state[dictio["use_1"]], delta)
-            self.players[i].use2_key(self.key_state[dictio["use_2"]], delta)
-            self.players[i].use3_key(self.key_state[dictio["use_3"]], delta)
+        for i in range(self.number_of_players):
+            if i < 2:
+                dictio = self.player_dict_keys[i]
+                self.players[i].up_key(self.key_state[dictio["up"]], delta)
+                self.players[i].left_key(self.key_state[dictio["left"]], delta)
+                self.players[i].down_key(self.key_state[dictio["down"]])
+                self.players[i].right_key(self.key_state[dictio["right"]], delta)
+                self.players[i].use1_key(self.key_state[dictio["use_1"]], delta)
+                self.players[i].use2_key(self.key_state[dictio["use_2"]], delta)
+                self.players[i].use3_key(self.key_state[dictio["use_3"]], delta)
 
     def handle_movements(self, delta):
-        for i in range(2):
+        for i in range(self.number_of_players):
             self.players[i].update_position_and_angle(delta)
