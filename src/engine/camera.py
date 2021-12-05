@@ -18,14 +18,15 @@ class Camera:
         sbp_width = (SCREEN_SIZE[0] - 2*self.screen_border_thickness) / SCREEN_SIZE[0]   # screenborderpercentage
         sbp_height = (SCREEN_SIZE[1] - 2 * self.screen_border_thickness) / SCREEN_SIZE[1]  # screenborderpercentage
 
-        self.min_rect_size = SCREEN_SIZE[0] * sbp_width, SCREEN_SIZE[1] * sbp_height
+        msm = 3  # min screen multiplier
+        self.min_rect_size = SCREEN_SIZE[0] * sbp_width * msm, SCREEN_SIZE[1] * sbp_height * msm
         self.rect_aspect_ratio = self.min_rect_size[0] / self.min_rect_size[1]
         if self.world_aspect < self.screen_aspect_ratio:
             self.max_rect_size = world_border[0]*sbp_width, (world_border[0]/self.screen_aspect_ratio)*sbp_height
         else:
             self.max_rect_size = world_border[1]*self.screen_aspect_ratio*sbp_width, world_border[1]*sbp_height
 
-        self.number_of_rects = 30
+        self.number_of_rects = 10
         self.last_left = []
         self.last_top = []
         self.last_width = []

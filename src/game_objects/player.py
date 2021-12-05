@@ -13,7 +13,7 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.va = 0
-        self.friction = 0.80
+        self.friction = 0.85
         self.catchup_rate = 0.5
         self.catchup_loss = 0.8
         self.catchup_min_speed = 100
@@ -22,7 +22,7 @@ class Player:
         self.free_fall = 0
         self.free_fall_length = 1  # sec
 
-        self.opp = OPP(image_type, 0.8)
+        self.opp = OPP(image_type, 0.5)
         self.image = None
         self.rect = None
         self.mask = None
@@ -103,7 +103,7 @@ class Player:
             if self.free_fall <= 0:
                 self.free_fall = 0
 
-        # self.vy += 275 * delta
+        self.vy += 275 * delta
         self.a += self.va
 
         if not self.free_fall and (abs(self.vx) > 0 or abs(self.vy) > 0):

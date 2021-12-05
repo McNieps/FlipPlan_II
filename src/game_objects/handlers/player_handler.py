@@ -28,7 +28,7 @@ class PlayerHandler:
         self.number_of_players = player_number
         player_x = 300 + len(self.players)
         player_y = 225
-        player = Player(player_number, player_x, player_y, "player")
+        player = Player(player_number, player_x, player_y, "basic_player")  # porco_rosso
 
         self.players.append(player)
 
@@ -40,6 +40,12 @@ class PlayerHandler:
         for key in self.players_keys:
             self.key_state[key][0] = False
             self.key_state[key][2] = False
+
+    def update_event(self, event):
+        if event.type == KEYDOWN:
+            self.update_keydown(event.key)
+        elif event.type == KEYUP:
+            self.update_keyup(event.key)
 
     def update_keydown(self, key):
         if key in self.players_keys:
@@ -66,3 +72,7 @@ class PlayerHandler:
     def handle_movements(self, delta):
         for i in range(self.number_of_players):
             self.players[i].update_position_and_angle(delta)
+
+    def update_surface_and_mask(self):
+        for i in range(self.number_of_players):
+            self.players[i].update_surface_and_hitbox()

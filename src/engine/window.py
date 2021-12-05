@@ -1,6 +1,11 @@
 import pygame
 from engine.data import SCREEN_SIZE, SCREEN_NAME, SCALED  # , SCREEN_ICON_PATH
 
+pygame.mixer.pre_init(44100, -16, 1, 512)
+
+pygame.init()
+
+pygame.mixer.set_num_channels(16)
 
 if SCALED:
     window = pygame.display.set_mode(SCREEN_SIZE, pygame.SCALED)
