@@ -129,9 +129,7 @@ class Player:
         self.y += self.vy*delta
 
     def update_surface_and_hitbox(self):
-        print(360-self.a)
         self.opp.set_angle(360-self.a, False)
-        print(self.opp.angle)
         self.image = self.opp.get_surface()
         self.image = pygame.transform.rotate(self.image, -self.a)
         self.rect = self.image.get_rect()

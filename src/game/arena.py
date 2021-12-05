@@ -1,7 +1,6 @@
 import pygame
 
 from src.engine.loop_handler import LoopHandler
-from src.engine.camera import Camera
 from src.game_objects.handlers.player_handler import PlayerHandler
 from src.game_objects.handlers.game_handler import GameHandler
 from src.game_objects.world import World
@@ -11,8 +10,7 @@ def arena(window):
     # region arena_initialization
     loop_handler = LoopHandler()
     player_handler = PlayerHandler()
-    player_handler.add_players(1)
-    camera = Camera(player_handler.players)
+    player_handler.add_players(2)
     world = World()
     game_handler = GameHandler(world, player_handler, window)
 
@@ -21,7 +19,6 @@ def arena(window):
     # region arena_loop
     while loop_handler.is_running():
         # loop_handler.print_fps()
-        print("")
         delta = loop_handler.limit_and_get_delta()
 
         for event in pygame.event.get():
