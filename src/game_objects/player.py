@@ -103,7 +103,7 @@ class Player:
             if self.free_fall <= 0:
                 self.free_fall = 0
 
-        self.vy += 275 * delta
+        # self.vy += 275 * delta
         self.a += self.va
 
         if not self.free_fall and (abs(self.vx) > 0 or abs(self.vy) > 0):

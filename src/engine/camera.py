@@ -9,20 +9,54 @@ class Camera:
 
         self.world_border = pygame.Rect(0, 0, 0, 0)
         self.world_border.size = world_border
+        self.world_aspect = world_border[0] / world_border[1]
 
-        self.aspect_ratio = SCREEN_SIZE[0]/SCREEN_SIZE[1]
+        self.screen_aspect_ratio = SCREEN_SIZE[0] / SCREEN_SIZE[1]
+        self.screen_size = SCREEN_SIZE
 
-        if self.world_border.width/self.aspect_ratio < self.world_border.height:
-            self.max_screen_size = (self.world_border.width, self.world_border.width/self.aspect_ratio)
+        self.screen_border_thickness = 50
+        sbp_width = (SCREEN_SIZE[0] - 2*self.screen_border_thickness) / SCREEN_SIZE[0]   # screenborderpercentage
+        sbp_height = (SCREEN_SIZE[1] - 2 * self.screen_border_thickness) / SCREEN_SIZE[1]  # screenborderpercentage
+
+        self.min_rect_size = SCREEN_SIZE[0] * sbp_width, SCREEN_SIZE[1] * sbp_height
+        self.rect_aspect_ratio = self.min_rect_size[0] / self.min_rect_size[1]
+        if self.world_aspect < self.screen_aspect_ratio:
+            self.max_rect_size = world_border[0]*sbp_width, (world_border[0]/self.screen_aspect_ratio)*sbp_height
         else:
-            self.max_screen_size = (self.world_border.height * self.aspect_ratio, self.world_border.height)
+            self.max_rect_size = world_border[1]*self.screen_aspect_ratio*sbp_width, world_border[1]*sbp_height
 
-        self.border_width = 80  # px / 2
-        self.interior_min_screen_size = SCREEN_SIZE[0]-self.border_width, SCREEN_SIZE[1]-self.border_width
-        self.interior_aspect_ratio = self.interior_min_screen_size[0] / self.interior_min_screen_size[1]
-        interior_max_width = SCREEN_SIZE[0]/(1+self.border_width/self.interior_min_screen_size[0])
-        interior_max_height = interior_max_width / self.interior_aspect_ratio
-        print(interior_max_width, interior_max_height)
+        self.number_of_rects = 30
+        self.last_left = []
+        self.last_top = []
+        self.last_width = []
+        self.last_height = []
+        self.initialize_lists()
+
+    def initialize_lists(self):
+        x = (self.world_border.width - self.max_rect_size[0])/2
+        y = (self.world_border.height - self.max_rect_size[1])/2
+        for i in range(self.number_of_rects):
+            self.last_left.append(x)
+            self.last_top.append(y)
+            self.last_width.append(self.max_rect_size[0])
+            self.last_height.append(self.max_rect_size[1])
+
+    def get_average_rect(self, rect):
+        self.last_left.insert(0, rect.left)
+        self.last_top.insert(0, rect.top)
+        self.last_width.insert(0, rect.width)
+        self.last_height.insert(0, rect.height)
+        self.last_left.pop(-1)
+        self.last_top.pop(-1)
+        self.last_width.pop(-1)
+        self.last_height.pop(-1)
+
+        avg_left = sum(self.last_left)/self.number_of_rects
+        avg_top = sum(self.last_top)/self.number_of_rects
+        avg_width = sum(self.last_width)/self.number_of_rects
+        avg_height = sum(self.last_height)/self.number_of_rects
+
+        return pygame.Rect(avg_left, avg_top, avg_width, avg_height)
 
     def compute_screen_size(self):
         left, right = self.entities[0].rect.left, self.entities[0].rect.right
@@ -40,37 +74,33 @@ class Camera:
 
         width = right - left
         height = bottom - top
-        aspect = width/height
-        temprect = pygame.Rect(left, top, width, height)
+        rect_aspect_ratio = width / height
+        rect = pygame.Rect(left, top, width, height)
+        rect_center = rect.center
 
-        if aspect < self.interior_aspect_ratio:
-            new_width = self.interior_aspect_ratio * height
-            if new_width < self.interior_min_screen_size[0]:
-                dx, dy = self.interior_min_screen_size[0]-width, self.interior_min_screen_size[1]-height
-            else:
-                dx, dy = new_width-width, 0
+        if width > self.max_rect_size[0] or height > self.max_rect_size[1]:
+            rect.size = self.max_rect_size
+        elif width < self.min_rect_size[0] and height < self.min_rect_size[1]:
+            rect.size = self.min_rect_size
+        elif rect_aspect_ratio < self.rect_aspect_ratio:
+            rect.size = height * self.rect_aspect_ratio, height
         else:
-            new_height = width / self.interior_aspect_ratio
-            if new_height < self.interior_min_screen_size[1]:
-                dx, dy = self.interior_min_screen_size[0]-width, self.interior_min_screen_size[1]-height
-            else:
-                dx, dy = 0, new_height-height
-        temprect.inflate_ip(dx, dy)
+            rect.size = width, width / self.rect_aspect_ratio
 
-        margin = temprect.width*self.border_width/self.interior_min_screen_size[0]
-        temprect.inflate_ip(margin, margin)
+        width, height = rect.size
 
-        if temprect.left < self.world_border.left:
-            dx = self.world_border.left-temprect.left
-            temprect.move_ip(dx, 0)
-        elif temprect.right > self.world_border.right:
-            dx = self.world_border.right-temprect.right
-            temprect.move_ip(dx, 0)
-        if temprect.top < self.world_border.top:
-            dy = self.world_border.top-temprect.top
-            temprect.move_ip(0, dy)
-        elif temprect.bottom > self.world_border.bottom:
-            dy = self.world_border.bottom-temprect.bottom
-            temprect.move_ip(0, dy)
+        margin = width * self.screen_border_thickness / self.min_rect_size[0]
+        rect.inflate_ip(margin, margin)
 
-        return temprect
+        rect.center = rect_center
+
+        if rect.top < self.world_border.top:
+            rect.top = self.world_border.top
+        elif rect.bottom > self.world_border.bottom:
+            rect.bottom = self.world_border.bottom
+        if rect.left < self.world_border.left:
+            rect.left = self.world_border.left
+        elif rect.right > self.world_border.right:
+            rect.right = self.world_border.right
+
+        return self.get_average_rect(rect)
