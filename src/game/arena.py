@@ -13,7 +13,7 @@ def arena(window):
     player_handler.add_players(1)
     world = World()
     game_handler = GameHandler(world, player_handler, window)
-    sound = pygame.mixer.Sound("../assets/sounds/explosion/loud_explosion.wav")
+    sound = pygame.mixer.Sound("../assets/sounds/basic_shot/basic_shot_1.wav")
 
     # endregion
 
@@ -35,7 +35,7 @@ def arena(window):
                     for i in range(len(player_handler.players)):
                         player_handler.players[i].set_position(0, 0, False)
                         player_handler.players[i].set_speed(0, 0, False)
-        if player_handler.key_state[pygame.K_o][0]:
+        if player_handler.key_state[pygame.K_i][1]:
             sound.play()
 
         game_handler.update_position(delta)
