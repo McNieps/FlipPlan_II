@@ -22,7 +22,7 @@ class Player:
         self.free_fall = 0
         self.free_fall_length = 1  # sec
 
-        self.opp = OPP(image_type, 0.5)
+        self.opp = OPP(image_type, 1)
         self.image = None
         self.rect = None
         self.mask = None

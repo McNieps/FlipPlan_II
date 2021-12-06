@@ -25,7 +25,7 @@ class OPP:
     def load_images(self, opp_name):
         self.images = []
         for i in range(8):
-            self.images.append(pygame.image.load(f"../assets/{opp_name}/{i}.png"))
+            self.images.append(pygame.image.load(f"../assets/player/{opp_name}/{i}.png"))
 
     def set_angle(self, angle, increment=True):
         if increment:

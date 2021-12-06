@@ -5,8 +5,6 @@ from src.game_objects.world import World
 
 from src.engine.camera import Camera
 
-from time import time
-
 
 class GameHandler:
     def __init__(self, world: World, player_handler: PlayerHandler, window: pygame.Surface):
@@ -27,8 +25,8 @@ class GameHandler:
         offsetx, offsety = -screen_rect.left, -screen_rect.top
 
         temporary_surface = pygame.Surface(screen_rect.size).convert_alpha()
-        temporary_surface.fill(self.world.background)
-        print(temporary_surface.blit(self.world.ground, (0, 0), screen_rect))
+        temporary_surface.fill(self.world.level_bg_color)
+        temporary_surface.blit(self.world.ground, (0, 0), screen_rect)
 
         for player in self.player_handler.players:
             player_pos = player.rect[0] + offsetx, player.rect[1] + offsety
@@ -42,6 +40,4 @@ class GameHandler:
                 self.snd.play()
 
         if screen_rect.size != self.window.get_rect().size:
-            temporary_surface = pygame.transform.scale(temporary_surface, self.window.get_rect().size)
-
-        self.window.blit(temporary_surface, (0, 0))
+            temporary_surface = pygame.transform.scale(temporary_surface, self.window.get_rect().size, self.window)
