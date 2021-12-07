@@ -4,7 +4,7 @@ from src.engine.data import SCREEN_SIZE
 
 
 class Camera:
-    def __init__(self, entities, world_border=(2400, 1350)):
+    def __init__(self, entities, world_border):
         self.entities = entities
 
         self.world_border = pygame.Rect(0, 0, 0, 0)
@@ -15,16 +15,20 @@ class Camera:
         self.screen_size = SCREEN_SIZE
 
         self.screen_border_thickness = 50
-        sbp_width = (SCREEN_SIZE[0] - 2*self.screen_border_thickness) / SCREEN_SIZE[0]   # screenborderpercentage
+        sbp_width = (SCREEN_SIZE[0] - 2 * self.screen_border_thickness) / SCREEN_SIZE[0]   # screenborderpercentage
         sbp_height = (SCREEN_SIZE[1] - 2 * self.screen_border_thickness) / SCREEN_SIZE[1]  # screenborderpercentage
 
-        msm = 2  # min screen multiplier
+        msm = 1  # min screen multiplier
         self.min_rect_size = SCREEN_SIZE[0] * sbp_width * msm, SCREEN_SIZE[1] * sbp_height * msm
         self.rect_aspect_ratio = self.min_rect_size[0] / self.min_rect_size[1]
+
         if self.world_aspect < self.screen_aspect_ratio:
             self.max_rect_size = world_border[0]*sbp_width, (world_border[0]/self.screen_aspect_ratio)*sbp_height
         else:
             self.max_rect_size = world_border[1]*self.screen_aspect_ratio*sbp_width, world_border[1]*sbp_height
+
+        if self.min_rect_size[0] > self.max_rect_size[0]:
+            self.min_rect_size = self.max_rect_size
 
         self.number_of_rects = 10
         self.last_left = []
@@ -90,7 +94,7 @@ class Camera:
 
         width, height = rect.size
 
-        margin = width * self.screen_border_thickness / self.min_rect_size[0]
+        margin = width * 2 * self.screen_border_thickness / self.min_rect_size[0]
         rect.inflate_ip(margin, margin)
 
         rect.center = rect_center
