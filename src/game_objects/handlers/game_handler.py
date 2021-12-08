@@ -33,12 +33,12 @@ class GameHandler:
             player_pos = player.rect[0] + offsetx, player.rect[1] + offsety
             temporary_surface.blit(player.image, player_pos)
 
-            # if not self.world.rect.collidepoint(player.rect.center) or self.world.mask.get_at(player.rect.center):
-            #    self.world.dig_ground(player.rect.center, 30)
+            if not self.world.level_rect.collidepoint(player.rect.center) or self.world.collide_ground_point_mask(player.rect.center):
+                self.world.dig_ground(player.rect.center, 20)
 
-            #    player.set_position(50, 50, False)
-            #    player.set_speed(0, 0, False)
-            #    self.snd.play()
+                player.set_position(50, 50, False)
+                player.set_speed(0, 0, False)
+                self.snd.play()
 
         if screen_rect.size != self.window.get_rect().size:
             temporary_surface = pygame.transform.scale(temporary_surface, self.window.get_rect().size).convert_alpha()

@@ -53,11 +53,31 @@ class World:
                 surface.blit(pygame.transform.scale(sub_surf, screen_rect.size), screen_rect)
 
     def dig_ground(self, pos, radius):
-        _surface = pygame.Surface((radius*2, radius*2))
-        pygame.draw.circle(_surface, (123, 123, 123), (radius, radius), radius)
-        _surface.set_colorkey((0, 0, 0))
-        rect = _surface.get_rect()
+        surface = pygame.Surface((radius*2, radius*2))
+        pygame.draw.circle(surface, (123, 123, 123), (radius, radius), radius)
+        surface.set_colorkey((0, 0, 0))
+        rect = surface.get_rect()
         rect.center = pos
-        self.ground.blit(_surface, rect.topleft)
-        self.ground.set_colorkey((123, 123, 123))
-        self.ground = self.ground.convert_alpha()
+
+        for tuple_rect in self.level_ground_rects:
+            if self.level_ground_rects[tuple_rect].colliderect(rect):
+                ground_rect = self.level_ground_rects[tuple_rect]
+                new_rect = rect.move(-ground_rect.left, -ground_rect.top)
+                self.level_ground_surfaces[tuple_rect].blit(surface, new_rect)
+                self.level_ground_surfaces[tuple_rect].set_colorkey((123, 123, 123))
+                self.level_ground_surfaces[tuple_rect] = self.level_ground_surfaces[tuple_rect].convert_alpha()
+                self.level_ground_masks[tuple_rect] = pygame.mask.from_surface(self.level_ground_surfaces[tuple_rect])
+
+    def collide_ground_point_mask(self, point):
+        for tuple_rect in self.level_ground_rects:
+            if self.level_ground_rects[tuple_rect].collidepoint(point):
+                local_point_coords = point[0]-tuple_rect[0], point[1]-tuple_rect[1]
+                if ans := self.level_ground_masks[tuple_rect].get_at(local_point_coords):
+                    return ans
+        return False
+
+    def collide_ground_rect_rect(self, rect):
+        pass
+
+    def collide_ground_mask_mask(self, mask, offset):
+        pass

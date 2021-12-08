@@ -30,7 +30,7 @@ class Camera:
         if self.min_rect_size[0] > self.max_rect_size[0]:
             self.min_rect_size = self.max_rect_size
 
-        self.number_of_rects = 10
+        self.number_of_rects = 120
         self.last_left = []
         self.last_top = []
         self.last_width = []
