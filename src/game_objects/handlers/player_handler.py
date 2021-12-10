@@ -1,9 +1,11 @@
 from pygame.locals import *
+
+from src.game_objects.handlers.projectile_handler import ProjectileHandler
 from src.game_objects.player import Player
 
 
 class PlayerHandler:
-    def __init__(self):
+    def __init__(self, projectile_handler: ProjectileHandler):
         self.players = []
         self.number_of_players = 0
 
@@ -23,12 +25,14 @@ class PlayerHandler:
         for key in self.players_keys:
             self.key_state[key] = [False, False, False]
 
+        self.projectile_handler = projectile_handler
+
     def add_player(self):
         player_number = len(self.players) + 1
         self.number_of_players = player_number
         player_x = 300 + len(self.players)
         player_y = 225
-        player = Player(player_number, player_x, player_y, "basic_player")  # porco_rosso
+        player = Player(player_number, player_x, player_y, "basic_player", self.projectile_handler)  # porco_rosso
 
         self.players.append(player)
 

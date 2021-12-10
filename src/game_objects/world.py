@@ -3,7 +3,7 @@ from json import load as json_load
 
 
 class World:
-    def __init__(self, level_folder_name="cliffs"):
+    def __init__(self, level_folder_name="isles"):
         file = open(f"../assets/world/{level_folder_name}/world_data.json", "r")
         level_dictionary = json_load(file)
         file.close()
@@ -68,16 +68,29 @@ class World:
                 self.level_ground_surfaces[tuple_rect] = self.level_ground_surfaces[tuple_rect].convert_alpha()
                 self.level_ground_masks[tuple_rect] = pygame.mask.from_surface(self.level_ground_surfaces[tuple_rect])
 
+    def rect_in_level(self, rect):
+        return self.level_rect.colliderect(rect)
+
     def collide_ground_point_mask(self, point):
         for tuple_rect in self.level_ground_rects:
             if self.level_ground_rects[tuple_rect].collidepoint(point):
                 local_point_coords = point[0]-tuple_rect[0], point[1]-tuple_rect[1]
-                if ans := self.level_ground_masks[tuple_rect].get_at(local_point_coords):
-                    return ans
+                if self.level_ground_masks[tuple_rect].get_at(local_point_coords):
+                    return True
         return False
 
     def collide_ground_rect_rect(self, rect):
-        pass
+        for tuple_rect in self.level_ground_rects:
+            if self.level_ground_rects[tuple_rect].colliderect(rect):
+                return True
+        return False
 
     def collide_ground_mask_mask(self, mask, offset):
-        pass
+        for tuple_rect in self.level_ground_rects:
+            mask_rect = mask.get_rect()
+            mask_rect.topleft = offset[:2]
+            if self.level_ground_rects[tuple_rect].colliderect(mask_rect):
+                mask_relative_offset = offset[0] - tuple_rect[0], offset[1] - tuple_rect[1]
+                if pos := self.level_ground_masks[tuple_rect].overlap(mask, mask_relative_offset):
+                    return pos
+        return False
