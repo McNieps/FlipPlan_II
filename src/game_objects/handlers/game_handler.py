@@ -6,15 +6,13 @@ from src.game_objects.world import World
 
 from src.engine.camera import Camera
 
-from time import time
-
 
 class GameHandler:
     def __init__(self, window: pygame.Surface, number_of_players):
         self.projectile_handler = ProjectileHandler()
         self.player_handler = PlayerHandler(self.projectile_handler)
         self.player_handler.add_players(number_of_players)
-        self.world = World()
+        self.world = World("cliffs")
 
         self.window = window
         self.camera = Camera(self.player_handler.players, self.world.level_size)
@@ -36,7 +34,7 @@ class GameHandler:
                 projectile.leave_level()
             elif pos := self.world.collide_ground_mask_mask(projectile.mask, projectile.rect):
                 projectile.hit_ground()
-                self.world.dig_ground(projectile.rect.center, 10)
+                self.world.dig_ground(pos, 1)
             else:
                 pass    # TODO ajouter collision pixel perfect sur joueurs
 

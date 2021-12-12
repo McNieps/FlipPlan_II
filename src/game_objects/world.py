@@ -92,5 +92,6 @@ class World:
             if self.level_ground_rects[tuple_rect].colliderect(mask_rect):
                 mask_relative_offset = offset[0] - tuple_rect[0], offset[1] - tuple_rect[1]
                 if pos := self.level_ground_masks[tuple_rect].overlap(mask, mask_relative_offset):
-                    return pos
+                    impact_pos = pos[0]+tuple_rect[0], pos[1]+tuple_rect[1]
+                    return impact_pos
         return False

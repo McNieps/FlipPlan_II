@@ -31,8 +31,8 @@ def arena(window):
                         game_handler.player_handler.players[i].set_position(0, 0, False)
                         game_handler.player_handler.players[i].set_speed(0, 0, False)
 
-        for i in range(1):
-            game_handler.update(delta/1)
+        for i in range(50):
+            game_handler.update(delta/50)
         game_handler.render()
 
         pygame.display.flip()

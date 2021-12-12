@@ -1,25 +1,30 @@
 import pygame
 
-from math import radians, cos, sin
+from math import radians, degrees, cos, sin
 from json import load as json_load
 from random import randint
 
+from src.game_objects.projectiles.ray_bullet import RayBullet
+
 
 class BasicMG:
-    def __init__(self, projectile, linked_plane, projectile_handler):
+    def __init__(self, linked_plane, projectile_handler):
         # Weapon metadata
         self.gunshot_sound = pygame.mixer.Sound("../assets/sounds/basic_shot/basic_shot_1.wav")
         self.gunshot_sound.set_volume(0.1)
-        self.min_rate_of_fire = None
-        self.max_rate_of_fire = None
-        self.min_spread = None
-        self.max_spread = None
+        self.start_rate_of_fire = None
+        self.end_rate_of_fire = None
+        self.diff_rate_of_fire = None
+        self.start_spread = None
+        self.end_spread = None
+        self.diff_spread = None
         self.time_before_overheat = None
+        self.overheat_severity_exponent = None
         self.cooldown_rate = None
         self.linked_plane = linked_plane
 
         # Projectile metadata
-        self.projectile = projectile
+        self.projectile = RayBullet
         self.projectile_initial_speed = None
         self.projectile_handler = projectile_handler
 
@@ -36,17 +41,22 @@ class BasicMG:
         dictionary = json_load(file)
         file.close()
 
-        self.min_rate_of_fire = 1 / dictionary["BasicMG"]["min_rate_of_fire"]
-        self.max_rate_of_fire = 1 / dictionary["BasicMG"]["max_rate_of_fire"]
-        self.min_spread = dictionary["BasicMG"]["min_spread"] * 1000
-        self.max_spread = dictionary["BasicMG"]["max_spread"] * 1000
+        self.start_rate_of_fire = 1 / dictionary["BasicMG"]["start_rate_of_fire"]
+        self.end_rate_of_fire = 1 / dictionary["BasicMG"]["end_rate_of_fire"]
+        self.diff_rate_of_fire = self.end_rate_of_fire - self.start_rate_of_fire
+        self.start_spread = dictionary["BasicMG"]["start_spread"] * 1000
+        self.end_spread = dictionary["BasicMG"]["end_spread"] * 1000
+        self.diff_spread = self.end_spread - self.start_spread
         self.time_before_overheat = dictionary["BasicMG"]["time_before_overheat"]
+        self.overheat_severity_exponent = dictionary["BasicMG"]["overheat_severity_exponent"]
         self.cooldown_rate = dictionary["BasicMG"]["cooldown_rate"]
         self.projectile_initial_speed = dictionary["BasicMG"]["projectile_speed"]
 
+    def get_overheat_coef(self):
+        return (self.weapon_time_spend_shooting/self.time_before_overheat)**self.overheat_severity_exponent
+
     def trigger(self, delta):
-        # TODO ROF dynamique
-        actual_rof = self.max_rate_of_fire
+        actual_rof = self.start_rate_of_fire + self.get_overheat_coef() * self.diff_rate_of_fire
         self.time_since_fired += self.time_excess
 
         if self.time_since_fired > actual_rof:
@@ -77,11 +87,11 @@ class BasicMG:
 
     def shoot(self):
         self.gunshot_sound.play()
-        self.linked_plane.set_speed(-10, 0)     # TODO add weapon knockback
+        # self.linked_plane.set_speed(-10, 0)     # TODO add weapon knockback in json
         rad = radians(self.linked_plane.a)
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
-        spread = self.max_spread                # TODO add spread function of overheat
+        spread = self.start_spread + round(self.get_overheat_coef() * self.diff_spread)
         rspread = radians(randint(-spread, spread) / 1000)
         sinspread = sin(rspread)
         cosspread = cos(rspread)
@@ -90,5 +100,6 @@ class BasicMG:
         projectile = self.projectile(self.linked_plane.player_number,
                                      self.linked_plane.x,
                                      self.linked_plane.y,
-                                     pvx, pvy)
+                                     pvx, pvy, self.linked_plane.a)
+        projectile.set_position(8, 0, True, True)
         self.projectile_handler.add_projectile(projectile)
