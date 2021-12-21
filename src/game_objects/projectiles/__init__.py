@@ -1,1 +1,1 @@
-from src.game_objects.projectiles.simple_bullet import SimpleBullet
+from src.game_objects.projectiles.abstract_bullet import AbstractBullet

@@ -1,9 +1,5 @@
 {
   "level_name": "Cliffs",
   "level_size": [1200, 700],
-  "bg_color": [139, 155, 180],
-  "ground_parts": {
-    "0_594.png": [0, 594],
-    "1046_372.png": [1046, 372]
-  }
+  "bg_color": [139, 155, 180]
 }
