@@ -1,6 +1,8 @@
 import pygame
 from json import load as json_load
 
+from src.engine.library import is_surface_empty
+
 
 class World:
     def __init__(self, level_folder_name="isles"):
@@ -17,19 +19,30 @@ class World:
         self.level_ground_masks = {}
         self.level_rect = pygame.Rect(0, 0, self.level_size[0], self.level_size[1])
 
-        self.load_surfaces_rects_masks(level_dictionary, level_folder_name)
+        # self.load_surfaces_rects_masks_old(level_dictionary, level_folder_name)
+        self.load_surfaces_rects_masks(level_folder_name)
 
-    def load_surfaces_rects_masks(self, level_dictionary, level_folder_name):
-        for i in level_dictionary["ground_parts"]:
-            image_file_path = f"../assets/world/{level_folder_name}/{i}"
-            surf = pygame.image.load(image_file_path).convert_alpha()
-            rect = surf.get_rect()
-            rect.move_ip(level_dictionary["ground_parts"][i])
-            rect_tuple = tuple(rect)
-            mask = pygame.mask.from_surface(surf)
-            self.level_ground_surfaces[rect_tuple] = surf
-            self.level_ground_rects[rect_tuple] = rect
-            self.level_ground_masks[rect_tuple] = mask
+    def load_surfaces_rects_masks(self, level_folder_name):
+        ground_surf = pygame.image.load(f"../assets/world/{level_folder_name}/ground.png").convert()
+        ground_width, ground_height = ground_surf.get_size()
+        cluster_size = (50, 50)
+        width_cluster_number = ground_width // cluster_size[0]
+        height_cluster_number = ground_height // cluster_size[1]
+        remainings = ground_width % cluster_size[0] + ground_height % cluster_size[1]
+        if remainings:
+            raise Exception("Level size and cluster size do not match")
+
+        for i in range(width_cluster_number):
+            for j in range(height_cluster_number):
+                tuple_rect = (i*cluster_size[0], j*cluster_size[1], cluster_size[0], cluster_size[1])
+                sub_rect = pygame.Rect(tuple_rect)
+                sub_surf = ground_surf.subsurface(sub_rect)
+                if not is_surface_empty(sub_surf):
+                    sub_mask = pygame.mask.from_surface(sub_surf)
+                    # TODO check si sub_surf est transparent -> retirer si c'est le cas
+                    self.level_ground_rects[tuple_rect] = sub_rect
+                    self.level_ground_surfaces[tuple_rect] = sub_surf
+                    self.level_ground_masks[tuple_rect] = sub_mask
 
     def blit_ground_to_surface(self, surface, camera_rect):
         zoom_x = camera_rect.width / surface.get_rect().width
@@ -53,19 +66,13 @@ class World:
                 surface.blit(pygame.transform.scale(sub_surf, screen_rect.size), screen_rect)
 
     def dig_ground(self, pos, radius):
-        surface = pygame.Surface((radius*2, radius*2))
-        pygame.draw.circle(surface, (123, 123, 123), (radius, radius), radius)
-        surface.set_colorkey((0, 0, 0))
-        rect = surface.get_rect()
-        rect.center = pos
+        rect = pygame.Rect(pos[0]-radius, pos[1]-radius, 2*radius, 2*radius)
 
         for tuple_rect in self.level_ground_rects:
             if self.level_ground_rects[tuple_rect].colliderect(rect):
                 ground_rect = self.level_ground_rects[tuple_rect]
-                new_rect = rect.move(-ground_rect.left, -ground_rect.top)
-                self.level_ground_surfaces[tuple_rect].blit(surface, new_rect)
-                self.level_ground_surfaces[tuple_rect].set_colorkey((123, 123, 123))
-                self.level_ground_surfaces[tuple_rect] = self.level_ground_surfaces[tuple_rect].convert_alpha()
+                new_center = pos[0] - ground_rect.left, pos[1] - ground_rect.top
+                pygame.draw.circle(self.level_ground_surfaces[tuple_rect], (0, 0, 0), new_center, radius)
                 self.level_ground_masks[tuple_rect] = pygame.mask.from_surface(self.level_ground_surfaces[tuple_rect])
 
     def rect_in_level(self, rect):
