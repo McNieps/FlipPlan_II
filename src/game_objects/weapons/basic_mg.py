@@ -1,8 +1,8 @@
 import pygame
 
-from math import radians, degrees, cos, sin
+from math import radians, cos, sin
 from json import load as json_load
-from random import randint
+from random import gauss
 
 from src.game_objects.projectiles.ray_bullet import RayBullet
 
@@ -11,7 +11,7 @@ class BasicMG:
     def __init__(self, linked_plane, projectile_handler):
         # Weapon metadata
         self.gunshot_sound = pygame.mixer.Sound("../assets/sounds/basic_shot/basic_shot_1.wav")
-        self.gunshot_sound.set_volume(0.1)
+        self.gunshot_sound.set_volume(0.05)
         self.start_rate_of_fire = None
         self.end_rate_of_fire = None
         self.diff_rate_of_fire = None
@@ -92,7 +92,7 @@ class BasicMG:
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
         spread = self.start_spread + round(self.get_overheat_coef() * self.diff_spread)
-        rspread = radians(randint(-spread, spread) / 1000)
+        rspread = radians(gauss(0, spread) / 1000)
         sinspread = sin(rspread)
         cosspread = cos(rspread)
         pvx = pvx * cosspread - pvy * sinspread

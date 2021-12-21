@@ -8,15 +8,16 @@ from src.engine.camera import Camera
 
 
 class GameHandler:
-    def __init__(self, window: pygame.Surface, number_of_players):
+    def __init__(self, window: pygame.Surface, number_of_players: int, level_name: str = "cliffs"):
         self.projectile_handler = ProjectileHandler()
         self.player_handler = PlayerHandler(self.projectile_handler)
         self.player_handler.add_players(number_of_players)
-        self.world = World("cliffs")
+        self.world = World(level_name)
 
         self.window = window
         self.camera = Camera(self.player_handler.players, self.world.level_size)
         self.snd = pygame.mixer.Sound("../assets/sounds/explosion/loud_explosion.wav")
+        self.snd.set_volume(0.2)
 
     def update_event(self, event):
         self.player_handler.update_event(event)
@@ -34,9 +35,14 @@ class GameHandler:
                 projectile.leave_level()
             elif pos := self.world.collide_ground_mask_mask(projectile.mask, projectile.rect):
                 projectile.hit_ground()
-                self.world.dig_ground(pos, 1)
+                self.world.dig_ground(pos, 2)  # TODO remettre normal
             else:
-                pass    # TODO ajouter collision pixel perfect sur joueurs
+                for player in self.player_handler.players:
+                    if player.player_number != projectile.player_number:
+                        diff_pos = -player.rect[0] + projectile.rect[0], -player.rect[1] + projectile.rect[1]
+                        if player.mask.overlap(projectile.mask, diff_pos):
+                            projectile.hit_player()
+                            player.hit(20)
 
         self.projectile_handler.check_and_remove_projectile()
 
@@ -60,7 +66,8 @@ class GameHandler:
             player_pos = player.rect[0] + offsetx, player.rect[1] + offsety
             temporary_surface.blit(player.image, player_pos)
 
-            if not self.world.level_rect.collidepoint(player.rect.center) or self.world.collide_ground_point_mask(player.rect.center):
+            if not self.world.level_rect.collidepoint(player.rect.center) or self.world.collide_ground_point_mask(
+                    player.rect.center):
                 self.world.dig_ground(player.rect.center, 20)
 
                 player.set_position(50, 50, False)

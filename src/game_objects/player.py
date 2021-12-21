@@ -2,9 +2,7 @@ import pygame
 
 from math import radians, sin, cos
 from numpy import dot
-from random import randint
 from src.engine.opp import OPP
-from src.game_objects.projectiles import SimpleBullet
 from src.game_objects.weapons.basic_mg import BasicMG
 
 
@@ -39,6 +37,9 @@ class Player:
         # weapons
         self.mg = BasicMG(self, projectile_handler)
         self.projectile_handler = projectile_handler
+
+        # stats
+        self.health = 100
 
     # region position and angle control
     def set_angle(self, angle, increment=True):
@@ -97,7 +98,8 @@ class Player:
             self.mg.trigger(delta)
 
     def use2_key(self, kdkpku, delta):      # Useless pour le moment
-        pass
+        if kdkpku[0]:
+            self.mg.load_values()
 
     def use3_key(self, kdkpku, delta):      # Useless pour le moment
         pass
@@ -146,5 +148,13 @@ class Player:
         if self.mask_affichee:
             self.image = self.mask.to_surface()
         self.rect.center = self.x, self.y
+
+    def hit(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            self.free_fall = 10
+
+    def respawn(self):
+        self.free_fall = 0
 
     # endregion
