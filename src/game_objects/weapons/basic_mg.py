@@ -22,6 +22,7 @@ class BasicMG:
         self.overheat_severity_exponent = None
         self.cooldown_rate = None
         self.linked_plane = linked_plane
+        self.recoil = None
 
         # Projectile metadata
         self.projectile = RayBullet
@@ -51,6 +52,7 @@ class BasicMG:
         self.overheat_severity_exponent = dictionary["BasicMG"]["overheat_severity_exponent"]
         self.cooldown_rate = dictionary["BasicMG"]["cooldown_rate"]
         self.projectile_initial_speed = dictionary["BasicMG"]["projectile_speed"]
+        self.recoil = dictionary["BasicMG"]["recoil"]
 
     def get_overheat_coef(self):
         return (self.weapon_time_spend_shooting/self.time_before_overheat)**self.overheat_severity_exponent
@@ -87,7 +89,8 @@ class BasicMG:
 
     def shoot(self):
         self.gunshot_sound.play()
-        # self.linked_plane.set_speed(-10, 0)     # TODO add weapon knockback in json
+        self.linked_plane.set_speed(-self.recoil, 0)
+
         rad = radians(self.linked_plane.a)
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
@@ -100,6 +103,6 @@ class BasicMG:
         projectile = self.projectile(self.linked_plane.player_number,
                                      self.linked_plane.x,
                                      self.linked_plane.y,
-                                     pvx, pvy, self.linked_plane.a)
+                                     pvx, pvy)
         projectile.set_position(8, 0, True, True)
         self.projectile_handler.add_projectile(projectile)

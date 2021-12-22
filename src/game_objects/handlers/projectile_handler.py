@@ -7,7 +7,7 @@ class ProjectileHandler:
 
     def handle_movements(self, delta):
         for projectile in self.projectile_list:
-            projectile.update_position(delta)
+            projectile.update(delta)
 
     def check_and_remove_projectile(self):
         index_to_remove = []

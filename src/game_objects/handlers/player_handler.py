@@ -32,7 +32,7 @@ class PlayerHandler:
         self.number_of_players = player_number
         player_x = 300 + len(self.players)
         player_y = 225
-        player = Player(player_number, player_x, player_y, "basic_player", self.projectile_handler)  # porco_rosso
+        player = Player(player_number, player_x, player_y, "fat_player", self.projectile_handler)
 
         self.players.append(player)
 

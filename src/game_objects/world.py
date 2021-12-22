@@ -25,7 +25,7 @@ class World:
     def load_surfaces_rects_masks(self, level_folder_name):
         ground_surf = pygame.image.load(f"../assets/world/{level_folder_name}/ground.png").convert()
         ground_width, ground_height = ground_surf.get_size()
-        cluster_size = (50, 50)
+        cluster_size = (100, 100)
         width_cluster_number = ground_width // cluster_size[0]
         height_cluster_number = ground_height // cluster_size[1]
         remainings = ground_width % cluster_size[0] + ground_height % cluster_size[1]

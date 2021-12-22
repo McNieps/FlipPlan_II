@@ -7,14 +7,15 @@ from src.game_objects.handlers.game_handler import GameHandler
 def arena(window):
     # region arena_initialization
     loop_handler = LoopHandler()
-    game_handler = GameHandler(window, 1)
+    game_handler = GameHandler(window, 1, "mountains")
+    player_handler = game_handler.player_handler
 
     # endregion
 
     # region arena_loop
     while loop_handler.is_running():
         # print("")
-        # loop_handler.print_fps()
+        loop_handler.print_fps()
         delta = loop_handler.limit_and_get_delta()
 
         for event in pygame.event.get():
@@ -31,8 +32,9 @@ def arena(window):
                         game_handler.player_handler.players[i].set_position(0, 0, False)
                         game_handler.player_handler.players[i].set_speed(0, 0, False)
 
-        for i in range(50):
-            game_handler.update(delta/50)
+        for i in range(10):
+            game_handler.update(delta/10)
+
         game_handler.render()
 
         pygame.display.flip()

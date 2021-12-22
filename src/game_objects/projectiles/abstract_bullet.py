@@ -1,15 +1,15 @@
 import pygame
-from math import radians, cos, sin
+from math import radians, degrees, cos, sin, atan2
 
 
 class AbstractBullet:
-    def __init__(self, player_number, x, y, vx, vy, angle=0):
+    def __init__(self, player_number, x, y, vx, vy):
         # position and movement
         self.x = x
         self.y = y
         self.vx = vx
         self.vy = vy
-        self.a = angle
+        self.a = degrees(atan2(self.vy, self.vx))
 
         # surface and mask
         self.image = pygame.Surface((5, 5))
@@ -29,6 +29,9 @@ class AbstractBullet:
         self.x += self.vx * delta
         self.y += self.vy * delta
         self.rect.center = self.x, self.y
+
+    def update(self, delta):
+        self.update_position(delta)
 
     def set_position(self, x, y, increment=True, relative=False):
         if relative:

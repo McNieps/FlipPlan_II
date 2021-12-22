@@ -25,7 +25,7 @@ class Player:
         self.free_fall_length = 1  # sec
 
         # surface and masks
-        self.opp = OPP(image_type, 0.4)
+        self.opp = OPP(image_type, 1)
         self.image = None
         self.rect = None
         self.mask = None
@@ -93,7 +93,7 @@ class Player:
         if kdkpku[1]:   # key_pressed
             self.set_angle(180 * delta)
 
-    def use1_key(self, kdkpku, delta):      # Useless pour le moment
+    def use1_key(self, kdkpku, delta):
         if kdkpku[1]:
             self.mg.trigger(delta)
 

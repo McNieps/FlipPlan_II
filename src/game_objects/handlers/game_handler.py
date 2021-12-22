@@ -3,12 +3,15 @@ import pygame
 from src.game_objects.handlers.player_handler import PlayerHandler
 from src.game_objects.handlers.projectile_handler import ProjectileHandler
 from src.game_objects.world import World
+from src.engine.library import set_outline
 
 from src.engine.camera import Camera
 
+from time import time as time
+
 
 class GameHandler:
-    def __init__(self, window: pygame.Surface, number_of_players: int, level_name: str = "cliffs"):
+    def __init__(self, window: pygame.Surface, number_of_players: int, level_name: str = "mountains"):
         self.projectile_handler = ProjectileHandler()
         self.player_handler = PlayerHandler(self.projectile_handler)
         self.player_handler.add_players(number_of_players)
@@ -63,8 +66,9 @@ class GameHandler:
             temporary_surface.blit(projectile.image, projectile_pos)
 
         for player in self.player_handler.players:
-            player_pos = player.rect[0] + offsetx, player.rect[1] + offsety
-            temporary_surface.blit(player.image, player_pos)
+            player_pos = player.rect[0] + offsetx - 1, player.rect[1] + offsety - 1
+
+            temporary_surface.blit(set_outline(player.image, 1, (70, 14, 43)), player_pos)
 
             if not self.world.level_rect.collidepoint(player.rect.center) or self.world.collide_ground_point_mask(
                     player.rect.center):
