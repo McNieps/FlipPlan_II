@@ -30,7 +30,7 @@ class Camera:
         if self.min_rect_size[0] > self.max_rect_size[0]:
             self.min_rect_size = self.max_rect_size
 
-        self.number_of_rects = 1
+        self.number_of_rects = 10
         self.last_left = []
         self.last_top = []
         self.last_width = []
@@ -63,7 +63,7 @@ class Camera:
 
         return pygame.Rect(avg_left, avg_top, avg_width, avg_height)
 
-    def compute_screen_size(self):
+    def old_compute_screen_size(self):
         left, right = self.entities[0].rect.left, self.entities[0].rect.right
         top, bottom = self.entities[0].rect.top, self.entities[0].rect.bottom
 
@@ -98,6 +98,30 @@ class Camera:
         rect.inflate_ip(margin, margin)
 
         rect.center = rect_center
+
+        if rect.top < self.world_border.top:
+            rect.top = self.world_border.top
+        elif rect.bottom > self.world_border.bottom:
+            rect.bottom = self.world_border.bottom
+        if rect.left < self.world_border.left:
+            rect.left = self.world_border.left
+        elif rect.right > self.world_border.right:
+            rect.right = self.world_border.right
+
+        return self.get_average_rect(rect)
+
+    def compute_screen_size(self):
+        sum_x = 0
+        sum_y = 0
+        nb_e = len(self.entities)
+        for e in self.entities:
+            sum_x += e.x + e.vx / 4
+            sum_y += e.y + e.vy / 4
+        avg_x = sum_x / nb_e
+        avg_y = sum_y / nb_e
+
+        rect = pygame.Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1])
+        rect.center = (avg_x, avg_y)
 
         if rect.top < self.world_border.top:
             rect.top = self.world_border.top

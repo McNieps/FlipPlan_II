@@ -49,36 +49,36 @@ class GameHandler:
 
         self.projectile_handler.check_and_remove_projectile()
 
-    def render(self):
+        for player in self.player_handler.players:
+            if not self.world.level_rect.collidepoint(player.rect.center):
+                # Ajouter player respawn
+                print("Sorti du terrain")
+                player.set_position(50, 50, False)
+                player.set_speed(0, 0, False)
+                self.snd.play()
 
+            if self.world.collide_ground_point_mask(player.rect.center):
+                # Ajouter player respawn
+                print("crash dans le terrain")
+                player.set_position(50, 50, False)
+                player.set_speed(0, 0, False)
+                self.snd.play()
+
+                self.world.dig_ground(player.rect.center, 20)
+
+    def render(self):
         screen_rect = self.camera.compute_screen_size()
         offsetx, offsety = -screen_rect.left, -screen_rect.top
 
-        # TODO Retirer cette surface temporaraire de merde, ça fait rammer
-        temporary_surface = pygame.Surface(screen_rect.size).convert_alpha()
-        temporary_surface.set_colorkey((0, 0, 0))
         self.window.fill(self.world.level_bg_color)
 
         self.world.blit_ground_to_surface(self.window, screen_rect)
 
         for projectile in self.projectile_handler.projectile_list:
             projectile_pos = projectile.rect[0] + offsetx, projectile.rect[1] + offsety
-            temporary_surface.blit(projectile.image, projectile_pos)
+            self.window.blit(projectile.image, projectile_pos)
 
         for player in self.player_handler.players:
+            # -1 sur x et -1 sur y pour prendre en compte le set_outline
             player_pos = player.rect[0] + offsetx - 1, player.rect[1] + offsety - 1
-
-            temporary_surface.blit(set_outline(player.image, 1, (70, 14, 43)), player_pos)
-
-            if not self.world.level_rect.collidepoint(player.rect.center) or self.world.collide_ground_point_mask(
-                    player.rect.center):
-                self.world.dig_ground(player.rect.center, 20)
-
-                player.set_position(50, 50, False)
-                player.set_speed(0, 0, False)
-                self.snd.play()
-
-        if screen_rect.size != self.window.get_rect().size:
-            temporary_surface = pygame.transform.scale(temporary_surface, self.window.get_rect().size).convert_alpha()
-
-        self.window.blit(temporary_surface, (0, 0))
+            self.window.blit(set_outline(player.image, 1, (70, 14, 43)), player_pos)

@@ -1,13 +1,13 @@
 {
   "BasicMG": {
-    "start_rate_of_fire": 35,
-    "end_rate_of_fire": 5,
-    "start_spread": 0.5,
-    "end_spread": 4,
-    "time_before_overheat": 3,
+    "start_rate_of_fire": 5,
+    "end_rate_of_fire": 35,
+    "start_spread": 6,
+    "end_spread": 2,
+    "time_before_overheat": 2,
     "overheat_severity_exponent": 2,
-    "cooldown_rate": 2,
-    "projectile_speed": 800,
+    "cooldown_rate": 4,
+    "projectile_speed": 1600,
     "recoil": 5
   }
 }

@@ -34,12 +34,12 @@ class World:
 
         for i in range(width_cluster_number):
             for j in range(height_cluster_number):
+                cluster_coords = (i, j)
                 tuple_rect = (i*cluster_size[0], j*cluster_size[1], cluster_size[0], cluster_size[1])
                 sub_rect = pygame.Rect(tuple_rect)
                 sub_surf = ground_surf.subsurface(sub_rect)
                 if not is_surface_empty(sub_surf):
                     sub_mask = pygame.mask.from_surface(sub_surf)
-                    # TODO check si sub_surf est transparent -> retirer si c'est le cas
                     self.level_ground_rects[tuple_rect] = sub_rect
                     self.level_ground_surfaces[tuple_rect] = sub_surf
                     self.level_ground_masks[tuple_rect] = sub_mask

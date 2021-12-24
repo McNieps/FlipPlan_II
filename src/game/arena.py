@@ -5,17 +5,11 @@ from src.game_objects.handlers.game_handler import GameHandler
 
 
 def arena(window):
-    # region arena_initialization
     loop_handler = LoopHandler()
     game_handler = GameHandler(window, 1, "mountains")
-    player_handler = game_handler.player_handler
 
-    # endregion
-
-    # region arena_loop
     while loop_handler.is_running():
-        # print("")
-        loop_handler.print_fps()
+        # loop_handler.print_fps()
         delta = loop_handler.limit_and_get_delta()
 
         for event in pygame.event.get():
@@ -40,7 +34,6 @@ def arena(window):
         pygame.display.flip()
 
     return loop_handler.end_of_loop_return()
-    # endregion
 
 
 if __name__ == "__main__":
