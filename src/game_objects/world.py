@@ -14,6 +14,7 @@ class World:
         self.level_size = level_dictionary["level_size"]
         self.level_bg_color = level_dictionary["bg_color"]
 
+        self.cluster_size = (50, 50)      # TODO ajouter une config pour regler ça
         self.level_ground_surfaces = {}
         self.level_ground_rects = {}
         self.level_ground_masks = {}
@@ -25,26 +26,29 @@ class World:
     def load_surfaces_rects_masks(self, level_folder_name):
         ground_surf = pygame.image.load(f"../assets/world/{level_folder_name}/ground.png").convert()
         ground_width, ground_height = ground_surf.get_size()
-        cluster_size = (100, 100)
-        width_cluster_number = ground_width // cluster_size[0]
-        height_cluster_number = ground_height // cluster_size[1]
-        remainings = ground_width % cluster_size[0] + ground_height % cluster_size[1]
+        width_cluster_number = ground_width // self.cluster_size[0]
+        height_cluster_number = ground_height // self.cluster_size[1]
+        remainings = ground_width % self.cluster_size[0] + ground_height % self.cluster_size[1]
         if remainings:
             raise Exception("Level size and cluster size do not match")
 
         for i in range(width_cluster_number):
             for j in range(height_cluster_number):
                 cluster_coords = (i, j)
-                tuple_rect = (i*cluster_size[0], j*cluster_size[1], cluster_size[0], cluster_size[1])
+                tuple_rect = (i*self.cluster_size[0],
+                              j*self.cluster_size[1],
+                              self.cluster_size[0],
+                              self.cluster_size[1])
+
                 sub_rect = pygame.Rect(tuple_rect)
                 sub_surf = ground_surf.subsurface(sub_rect)
                 if not is_surface_empty(sub_surf):
                     sub_mask = pygame.mask.from_surface(sub_surf)
-                    self.level_ground_rects[tuple_rect] = sub_rect
-                    self.level_ground_surfaces[tuple_rect] = sub_surf
-                    self.level_ground_masks[tuple_rect] = sub_mask
+                    self.level_ground_rects[cluster_coords] = sub_rect
+                    self.level_ground_surfaces[cluster_coords] = sub_surf
+                    self.level_ground_masks[cluster_coords] = sub_mask
 
-    def blit_ground_to_surface(self, surface, camera_rect):
+    def old_blit_ground_to_surface(self, surface, camera_rect):
         zoom_x = camera_rect.width / surface.get_rect().width
         zoom_y = camera_rect.height / surface.get_rect().height
 
@@ -65,6 +69,14 @@ class World:
                 # pygame.draw.rect(surface, (255, 0, 0), screen_rect)
                 surface.blit(pygame.transform.scale(sub_surf, screen_rect.size), screen_rect)
 
+    def blit_ground_to_surface(self, surface, camera_rect):
+        visible_clusters = self.clusters_in_rect(camera_rect)
+        for cluster in visible_clusters:
+            pos = (self.level_ground_rects[cluster].topleft[0] - camera_rect[0],
+                   self.level_ground_rects[cluster].topleft[1] - camera_rect[1])
+
+            surface.blit(self.level_ground_surfaces[cluster], pos)
+
     def dig_ground(self, pos, radius):
         rect = pygame.Rect(pos[0]-radius, pos[1]-radius, 2*radius, 2*radius)
 
@@ -78,27 +90,45 @@ class World:
     def rect_in_level(self, rect):
         return self.level_rect.colliderect(rect)
 
+    def clusters_in_rect(self, rect):
+        clusters = []
+        left_indice = rect.left // self.cluster_size[0]
+        right_indice = rect.right // self.cluster_size[0]
+        top_indice = rect.top // self.cluster_size[1]
+        bottom_indice = rect.bottom // self.cluster_size[1]
+        for i in range(left_indice, right_indice+1):
+            for j in range(top_indice, bottom_indice+1):
+                if (i, j) in self.level_ground_rects:       # Si le cluster existe
+                    clusters.append((i, j))
+        return clusters
+
     def collide_ground_point_mask(self, point):
-        for tuple_rect in self.level_ground_rects:
-            if self.level_ground_rects[tuple_rect].collidepoint(point):
-                local_point_coords = point[0]-tuple_rect[0], point[1]-tuple_rect[1]
-                if self.level_ground_masks[tuple_rect].get_at(local_point_coords):
-                    return True
+        point_cluster_coords = point[0]//self.cluster_size[0], point[1]//self.cluster_size[1]
+        local_point_coords = point[0] % self.cluster_size[0], point[1] % self.cluster_size[1]
+        if point_cluster_coords in self.level_ground_masks:
+            if self.level_ground_masks[point_cluster_coords].get_at(local_point_coords):
+                return True
         return False
 
     def collide_ground_rect_rect(self, rect):
+        print("TESTESTETS")
         for tuple_rect in self.level_ground_rects:
             if self.level_ground_rects[tuple_rect].colliderect(rect):
                 return True
         return False
 
     def collide_ground_mask_mask(self, mask, offset):
-        for tuple_rect in self.level_ground_rects:
-            mask_rect = mask.get_rect()
-            mask_rect.topleft = offset[:2]
-            if self.level_ground_rects[tuple_rect].colliderect(mask_rect):
-                mask_relative_offset = offset[0] - tuple_rect[0], offset[1] - tuple_rect[1]
-                if pos := self.level_ground_masks[tuple_rect].overlap(mask, mask_relative_offset):
-                    impact_pos = pos[0]+tuple_rect[0], pos[1]+tuple_rect[1]
+        mask_rect = mask.get_rect()
+        mask_rect.move_ip(offset[0], offset[1])
+
+        intersecting_clusters = self.clusters_in_rect(mask_rect)
+
+        for cluster in intersecting_clusters:
+            if cluster in self.level_ground_masks:
+                mask_relative_offset = (offset[0] - cluster[0] * self.cluster_size[0],
+                                        offset[1] - cluster[1] * self.cluster_size[1])
+                if pos := self.level_ground_masks[cluster].overlap(mask, mask_relative_offset):
+                    impact_pos = (pos[0] + cluster[0] * self.cluster_size[0],
+                                  pos[1] + cluster[1] * self.cluster_size[1])
                     return impact_pos
         return False

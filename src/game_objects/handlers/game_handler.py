@@ -7,8 +7,6 @@ from src.engine.library import set_outline
 
 from src.engine.camera import Camera
 
-from time import time as time
-
 
 class GameHandler:
     def __init__(self, window: pygame.Surface, number_of_players: int, level_name: str = "mountains"):

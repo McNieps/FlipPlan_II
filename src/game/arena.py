@@ -4,12 +4,12 @@ from src.engine.loop_handler import LoopHandler
 from src.game_objects.handlers.game_handler import GameHandler
 
 
-def arena(window):
+def arena(window, level_name="mountains"):
     loop_handler = LoopHandler()
-    game_handler = GameHandler(window, 1, "mountains")
+    game_handler = GameHandler(window, 1, level_name)
 
     while loop_handler.is_running():
-        # loop_handler.print_fps()
+        loop_handler.print_fps()
         delta = loop_handler.limit_and_get_delta()
 
         for event in pygame.event.get():
@@ -30,7 +30,6 @@ def arena(window):
             game_handler.update(delta/10)
 
         game_handler.render()
-
         pygame.display.flip()
 
     return loop_handler.end_of_loop_return()
