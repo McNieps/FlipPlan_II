@@ -35,7 +35,7 @@ class Player:
         self.player_number = number
 
         # weapons
-        self.mg = BasicMG(self, projectile_handler)
+        self.weapon_1 = BasicMG(self, projectile_handler)
         self.projectile_handler = projectile_handler
 
         # stats
@@ -95,13 +95,12 @@ class Player:
 
     def use1_key(self, kdkpku, delta):
         if kdkpku[1]:
-            self.mg.trigger(delta)
+            self.weapon_1.trigger(delta)
 
-    def use2_key(self, kdkpku, delta):      # Useless pour le moment
-        if kdkpku[0]:
-            self.mg.load_values()
+    def use2_key(self, kdkpku, delta):
+        pass
 
-    def use3_key(self, kdkpku, delta):      # Useless pour le moment
+    def use3_key(self, kdkpku, delta):
         pass
     # endregion
 
@@ -109,7 +108,8 @@ class Player:
     def update_position_and_angle(self, delta):
         if delta > 0.1:
             return False
-        self.mg.reset(delta)
+
+        self.weapon_1.reset(delta)
 
         if self.free_fall:
             self.free_fall -= delta

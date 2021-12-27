@@ -1,0 +1,15 @@
+{
+  "window": {
+    "size": [640, 480],
+    "name": "FlipPlan II",
+    "icon": true,
+    "scaled": true
+  },
+  "system": {
+    "fps": 120,
+    "IFI": 5
+  },
+  "audio": {
+    "number_of_channels": 256
+  }
+}

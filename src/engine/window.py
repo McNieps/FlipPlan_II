@@ -1,21 +1,21 @@
 import pygame
-from engine.data import SCREEN_SIZE, SCREEN_NAME, SCALED  # , SCREEN_ICON_PATH
+from engine.data import game_dict
+
 
 pygame.mixer.pre_init(44100, -16, 1, 512)
-
 pygame.init()
+pygame.mixer.set_num_channels(game_dict["audio"]["number_of_channels"])
 
-pygame.mixer.set_num_channels(2048)  # 256
-
-if SCALED:
-    window = pygame.display.set_mode(SCREEN_SIZE, pygame.SCALED)
+if game_dict["window"]["scaled"]:
+    window = pygame.display.set_mode(game_dict["window"]["size"], pygame.SCALED)
 else:
-    window = pygame.display.set_mode(SCREEN_SIZE)
+    window = pygame.display.set_mode(game_dict["window"]["size"])
 
-pygame.display.set_caption(SCREEN_NAME)
+pygame.display.set_caption(game_dict["window"]["name"])
 
-# icon = pygame.image.load(SCREEN_ICON_PATH).convert_alpha()
-# pygame.display.set_icon(icon)
+if game_dict["window"]["icon"]:
+    icon = pygame.image.load("../assets/data/icon.png").convert()
+    pygame.display.set_icon(icon)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,9 @@
-# WINDOW
-SCREEN_SIZE = (640, 480)  # (256, 224)  , (400, 300)
-SCREEN_NAME = "FlipPlan 2"
-SCREEN_ICON_PATH = ""
-SCALED = True
+from json import load as json_load
 
-# SYSTEM
-MAX_FPS = 120
+json_file = open("../assets/data/data.json", "r")
+game_dict = json_load(json_file)
+json_file.close()
+
+SCREEN_SIZE = game_dict["window"]["size"]
+MAX_FPS = game_dict["system"]["fps"]
+IFI = game_dict["system"]["IFI"]        # Nombre de calculs interframe

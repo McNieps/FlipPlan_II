@@ -63,11 +63,8 @@ class World:
             marge_y = bg_dict["size"][1] - SCREEN_SIZE[1]
             max_travel_x = self.level_ground_surfaces["size"][0] - SCREEN_SIZE[0]
             max_travel_y = self.level_ground_surfaces["size"][1] - SCREEN_SIZE[1]
-            d_max_x = self.level_ground_surfaces["size"][0] - bg_dict["size"][0]
-            d_max_y = self.level_ground_surfaces["size"][1] - bg_dict["size"][1]
             x_mult = marge_x / max_travel_x
             y_mult = marge_y / max_travel_y
-            print(x_mult, y_mult)
             bg_dict["x_mult"] = x_mult
             bg_dict["y_mult"] = y_mult
             bg_dict["surf"] = bg_surf

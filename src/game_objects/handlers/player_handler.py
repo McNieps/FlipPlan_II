@@ -1,7 +1,7 @@
 from pygame.locals import *
 
 from src.game_objects.handlers.projectile_handler import ProjectileHandler
-from src.game_objects.player import Player
+from game_objects.players.player import Player
 
 
 class PlayerHandler:

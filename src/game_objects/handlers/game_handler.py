@@ -36,14 +36,14 @@ class GameHandler:
                 projectile.leave_level()
             elif pos := self.world.collide_ground_mask_mask(projectile.mask, projectile.rect):
                 projectile.hit_ground()
-                self.world.dig_ground(pos, 2)  # TODO remettre normal
+                self.world.dig_ground(pos, 2)
             else:
                 for player in self.player_handler.players:
                     if player.player_number != projectile.player_number:
                         diff_pos = -player.rect[0] + projectile.rect[0], -player.rect[1] + projectile.rect[1]
                         if player.mask.overlap(projectile.mask, diff_pos):
                             projectile.hit_player()
-                            player.hit(20)
+                            player.hit(20)  # TODO Gerer ça c'est naze là
 
         self.projectile_handler.check_and_remove_projectile()
 

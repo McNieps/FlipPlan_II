@@ -1,7 +1,9 @@
 import pygame
 
 from src.engine.loop_handler import LoopHandler
+from src.engine.data import IFI
 from src.game_objects.handlers.game_handler import GameHandler
+
 
 
 def arena(window, level_name="mountains"):
@@ -21,13 +23,8 @@ def arena(window, level_name="mountains"):
                 if event.key == pygame.K_ESCAPE:
                     loop_handler.stop_loop()
 
-                elif event.key == pygame.K_RETURN:
-                    for i in range(len(game_handler.player_handler.players)):
-                        game_handler.player_handler.players[i].set_position(0, 0, False)
-                        game_handler.player_handler.players[i].set_speed(0, 0, False)
-
-        for i in range(10):
-            game_handler.update(delta/10)
+        for i in range(IFI):
+            game_handler.update(delta/IFI)
 
         game_handler.render()
         pygame.display.flip()
