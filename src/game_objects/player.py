@@ -107,6 +107,8 @@ class Player:
 
     # region player update
     def update_position_and_angle(self, delta):
+        if delta > 0.1:
+            return False
         self.mg.reset(delta)
 
         if self.free_fall:
@@ -138,6 +140,7 @@ class Player:
         self.vy *= self.friction**delta
         self.x += self.vx*delta
         self.y += self.vy*delta
+        return True
 
     def update_surface_and_hitbox(self):
         self.opp.set_angle(360-self.a, False)

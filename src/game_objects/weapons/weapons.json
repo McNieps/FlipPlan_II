@@ -1,7 +1,7 @@
 {
   "BasicMG": {
-    "start_rate_of_fire": 45,
-    "end_rate_of_fire": 15,
+    "start_rate_of_fire": 15,
+    "end_rate_of_fire": 5,
     "start_spread": 1,
     "end_spread": 6,
     "time_before_overheat": 2,

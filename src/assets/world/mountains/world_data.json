@@ -1,5 +1,7 @@
 {
   "level_name": "Mountains",
   "level_size": [2000, 900],
-  "bg_color": [19, 2, 8]
+  "bg_color": [31, 5, 16],
+  "cluster_size": [50, 50],
+  "background": ["bg_2.png", "bg_1.png"]
 }

@@ -29,9 +29,9 @@ class PlayerHandler:
 
     def add_player(self):
         player_number = len(self.players) + 1
-        self.number_of_players = player_number
-        player_x = 300 + len(self.players)
-        player_y = 225
+        self.number_of_players += 1
+        player_x = 50
+        player_y = 50
         player = Player(player_number, player_x, player_y, "fat_player", self.projectile_handler)
 
         self.players.append(player)

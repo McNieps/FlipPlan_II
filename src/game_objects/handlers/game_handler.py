@@ -70,6 +70,7 @@ class GameHandler:
 
         self.window.fill(self.world.level_bg_color)
 
+        self.world.blit_background_to_surface(self.window, screen_rect)
         self.world.blit_ground_to_surface(self.window, screen_rect)
 
         for projectile in self.projectile_handler.projectile_list:

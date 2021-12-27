@@ -1,5 +1,6 @@
 {
   "level_name": "Isles",
   "level_size": [2550, 1950],
-  "bg_color": [44, 232, 245]
+  "bg_color": [44, 232, 245],
+  "cluster_size": [50, 50]
 }
