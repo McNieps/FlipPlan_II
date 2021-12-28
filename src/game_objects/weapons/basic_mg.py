@@ -26,6 +26,7 @@ class BasicMG:
 
         # Projectile metadata
         self.projectile = RayBullet
+        self.projectile_image = pygame.image.load('../assets/projectiles/ray_bullet.png').convert_alpha()
         self.projectile_initial_speed = None
         self.projectile_handler = projectile_handler
 
@@ -42,22 +43,25 @@ class BasicMG:
         dictionary = json_load(file)
         file.close()
 
-        self.start_rate_of_fire = 1 / dictionary["BasicMG"]["start_rate_of_fire"]
-        self.end_rate_of_fire = 1 / dictionary["BasicMG"]["end_rate_of_fire"]
+        self.start_rate_of_fire = 1 / dictionary["basic_mg"]["start_rate_of_fire"]
+        self.end_rate_of_fire = 1 / dictionary["basic_mg"]["end_rate_of_fire"]
         self.diff_rate_of_fire = self.end_rate_of_fire - self.start_rate_of_fire
-        self.start_spread = dictionary["BasicMG"]["start_spread"] * 1000
-        self.end_spread = dictionary["BasicMG"]["end_spread"] * 1000
+        self.start_spread = dictionary["basic_mg"]["start_spread"] * 1000
+        self.end_spread = dictionary["basic_mg"]["end_spread"] * 1000
         self.diff_spread = self.end_spread - self.start_spread
-        self.time_before_overheat = dictionary["BasicMG"]["time_before_overheat"]
-        self.overheat_severity_exponent = dictionary["BasicMG"]["overheat_severity_exponent"]
-        self.cooldown_rate = dictionary["BasicMG"]["cooldown_rate"]
-        self.projectile_initial_speed = dictionary["BasicMG"]["projectile_speed"]
-        self.recoil = dictionary["BasicMG"]["recoil"]
+        self.time_before_overheat = dictionary["basic_mg"]["time_before_overheat"]
+        self.overheat_severity_exponent = dictionary["basic_mg"]["overheat_severity_exponent"]
+        self.cooldown_rate = dictionary["basic_mg"]["cooldown_rate"]
+        self.projectile_initial_speed = dictionary["basic_mg"]["projectile_speed"]
+        self.recoil = dictionary["basic_mg"]["recoil"]
 
     def get_overheat_coef(self):
         return (self.weapon_time_spend_shooting/self.time_before_overheat)**self.overheat_severity_exponent
 
-    def trigger(self, delta):
+    def trigger_down(self):
+        pass
+
+    def trigger_pressed(self, delta):
         actual_rof = self.start_rate_of_fire + self.get_overheat_coef() * self.diff_rate_of_fire
         self.time_since_fired += self.time_excess
 
@@ -74,6 +78,9 @@ class BasicMG:
         self.weapon_time_spend_shooting += delta
         if self.weapon_time_spend_shooting > self.time_before_overheat:
             self.weapon_time_spend_shooting = self.time_before_overheat
+
+    def trigger_up(self):
+        pass
 
     def reset(self, delta):
         if self.time_since_fired:
@@ -103,6 +110,6 @@ class BasicMG:
         projectile = self.projectile(self.linked_plane.player_number,
                                      self.linked_plane.x,
                                      self.linked_plane.y,
-                                     pvx, pvy)
+                                     pvx, pvy, self.projectile_image)
         projectile.set_position(8, 0, True, True)
         self.projectile_handler.add_projectile(projectile)

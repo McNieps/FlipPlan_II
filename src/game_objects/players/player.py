@@ -4,6 +4,7 @@ from math import radians, sin, cos
 from numpy import dot
 from src.engine.opp import OPP
 from src.game_objects.weapons.basic_mg import BasicMG
+from src.game_objects.weapons.missile_launcher import MissileLauncher
 
 
 class Player:
@@ -36,6 +37,7 @@ class Player:
 
         # weapons
         self.weapon_1 = BasicMG(self, projectile_handler)
+        self.weapon_2 = MissileLauncher(self, projectile_handler)
         self.projectile_handler = projectile_handler
 
         # stats
@@ -94,11 +96,21 @@ class Player:
             self.set_angle(180 * delta)
 
     def use1_key(self, kdkpku, delta):
+        if kdkpku[0]:
+            self.weapon_1.trigger_down()
         if kdkpku[1]:
-            self.weapon_1.trigger(delta)
+            self.weapon_1.trigger_pressed(delta)
+        elif kdkpku[2]:
+            self.weapon_1.trigger_up()
 
     def use2_key(self, kdkpku, delta):
-        pass
+        if kdkpku[0]:
+            print("OH")
+            self.weapon_2.trigger_down()
+        if kdkpku[1]:
+            self.weapon_2.trigger_pressed(delta)
+        elif kdkpku[2]:
+            self.weapon_2.trigger_up()
 
     def use3_key(self, kdkpku, delta):
         pass
@@ -110,6 +122,7 @@ class Player:
             return False
 
         self.weapon_1.reset(delta)
+        self.weapon_2.reset(delta)
 
         if self.free_fall:
             self.free_fall -= delta

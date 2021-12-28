@@ -5,13 +5,12 @@ from src.engine.data import IFI
 from src.game_objects.handlers.game_handler import GameHandler
 
 
-
 def arena(window, level_name="mountains"):
     loop_handler = LoopHandler()
     game_handler = GameHandler(window, 1, level_name)
 
     while loop_handler.is_running():
-        loop_handler.print_fps()
+        # loop_handler.print_fps()
         delta = loop_handler.limit_and_get_delta()
 
         for event in pygame.event.get():

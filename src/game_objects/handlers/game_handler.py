@@ -44,7 +44,6 @@ class GameHandler:
                         if player.mask.overlap(projectile.mask, diff_pos):
                             projectile.hit_player()
                             player.hit(20)  # TODO Gerer ça c'est naze là
-
         self.projectile_handler.check_and_remove_projectile()
 
         for player in self.player_handler.players:

@@ -1,13 +1,22 @@
 {
-  "BasicMG": {
-    "start_rate_of_fire": 15,
-    "end_rate_of_fire": 5,
+  "basic_mg": {
+    "start_rate_of_fire": 30,
+    "end_rate_of_fire": 7,
     "start_spread": 1,
     "end_spread": 6,
     "time_before_overheat": 2,
     "overheat_severity_exponent": 2,
-    "cooldown_rate": 0.75,
-    "projectile_speed": 1600,
+    "cooldown_rate": 1.25,
+    "projectile_speed": 1500,
     "recoil": 5
+  },
+  "missile_launcher": {
+    "capacity": 4,
+    "recover_time": 2,
+    "projectile_speed_distribution": 0.5,
+    "projectile_speed": 0,
+    "projectile_acceleration": 800,
+    "projectile_angle_variation_amplitude": 2,
+    "projectile_angle_variation_frequency": 10
   }
 }

@@ -1,15 +1,15 @@
 import pygame
 from math import degrees, atan2
 
-from src.game_objects.projectiles import AbstractBullet
+from src.game_objects.projectiles.abstract_bullet import AbstractBullet
 
 
 class RayBullet(AbstractBullet):
-    def __init__(self, player_number, x, y, vx, vy):
+    def __init__(self, player_number, x, y, vx, vy, img):
         super().__init__(player_number, x, y, vx, vy)
 
         # surface and mask
-        self.original_image = pygame.image.load("../assets/projectiles/ray_bullet.png").convert_alpha()
+        self.original_image = img
         self.image = pygame.transform.rotate(self.original_image, -self.a)
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)

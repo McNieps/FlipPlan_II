@@ -1,6 +1,5 @@
 import pygame
 from json import load as json_load
-from math import ceil, floor
 
 from src.engine.library import is_surface_empty
 from src.engine.data import SCREEN_SIZE
@@ -80,6 +79,7 @@ class World:
                 surface.blit(self.level_ground_surfaces[cluster]["surf"], pos)
 
     def blit_background_to_surface(self, surface, camera_rect):
+        # TODO ADD CLUSTERISATION TO BACKGROUND
         for layer in range(len(self.level_background_surfaces)):
             pos = [camera_rect[0] * -self.level_background_surfaces[layer]["x_mult"],
                    camera_rect[1] * -self.level_background_surfaces[layer]["y_mult"]]
@@ -99,7 +99,7 @@ class World:
     def rect_in_level(self, rect):
         return self.level_rect.colliderect(rect)
 
-    def clusters_in_rect(self, rect, layer_coefs=(1, 1)):
+    def clusters_in_rect(self, rect):
         clusters = []
 
         left_indice = rect.left // self.cluster_size[0]

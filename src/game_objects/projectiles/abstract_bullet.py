@@ -25,7 +25,6 @@ class AbstractBullet:
         self.death_function = self.on_death_event
 
     def update_position(self, delta):
-        self.vy += 275*delta
         self.x += self.vx * delta
         self.y += self.vy * delta
         self.rect.center = self.x, self.y
