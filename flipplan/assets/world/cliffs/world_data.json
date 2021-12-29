@@ -1,0 +1,9 @@
+{
+  "level_name": "Cliffs",
+  "level_size": [1200, 700],
+  "bg_color": [139, 155, 180],
+  "cluster_size": [50, 50],
+  "background": {
+
+  }
+}

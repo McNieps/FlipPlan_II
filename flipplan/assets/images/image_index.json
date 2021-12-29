@@ -1,0 +1,49 @@
+{
+  "icon": "icon.png",
+  "player": {
+    "basic_player": {
+      "0": "0.png",
+      "1": "1.png",
+      "2": "2.png",
+      "3": "3.png",
+      "4": "4.png",
+      "5": "5.png",
+      "6": "6.png",
+      "7": "7.png"
+    },
+    "small_player": {
+      "0": "0.png",
+      "1": "1.png",
+      "2": "2.png",
+      "3": "3.png",
+      "4": "4.png",
+      "5": "5.png",
+      "6": "6.png",
+      "7": "7.png"
+    },
+    "fat_player": {
+      "0": "0.png",
+      "1": "1.png",
+      "2": "2.png",
+      "3": "3.png",
+      "4": "4.png",
+      "5": "5.png",
+      "6": "6.png",
+      "7": "7.png"
+    },
+    "porco_rosso": {
+      "0": "0.png",
+      "1": "1.png",
+      "2": "2.png",
+      "3": "3.png",
+      "4": "4.png",
+      "5": "5.png",
+      "6": "6.png",
+      "7": "7.png"
+    }
+  },
+  "projectiles": {
+    "ray_bullet": "ray_bullet.png",
+    "missile": "missile.png"
+  }
+}

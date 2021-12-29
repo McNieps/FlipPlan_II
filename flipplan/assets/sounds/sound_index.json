@@ -1,0 +1,35 @@
+{
+  "intro": {
+    "intro_illapsum": "Intro_Illapsum_Studio.wav"
+  },
+
+  "explosion": {
+    "loud_explosion_1": "loud_explosion.wav"
+  },
+
+  "weapons": {
+    "basic_mg": {
+      "shoot_1": "basic_shot_1.wav",
+      "shoot_2": "basic_shot_2.wav",
+      "shoot_3": "basic_shot_3.wav",
+      "shoot_4": "basic_shot_4.wav",
+      "shoot_5": "basic_shot_5.wav",
+      "shoot_6": "basic_shot_6.wav",
+      "shoot_7": "basic_shot_7.wav",
+      "shoot_8": "basic_shot_8.wav",
+      "shoot_9": "basic_shot_9.wav",
+      "shoot_10": "basic_shot_10.wav",
+      "shoot_11": "basic_shot_11.wav",
+      "shoot_12": "basic_shot_12.wav"
+    },
+    "missile_launcher": {
+      "shoot_1": "missile_launch_1.wav",
+      "shoot_2": "missile_launch_2.wav",
+      "shoot_3": "missile_launch_3.wav"
+    }
+  },
+
+  "misc": {
+
+  }
+}
