@@ -2,11 +2,12 @@ import pygame
 from json import load as json_load
 
 from flipplan.engine.library import is_surface_empty
-from flipplan.engine.data import SCREEN_SIZE
 
 
 class World:
-    def __init__(self, level_folder_name):
+    def __init__(self, screen_size, level_folder_name):
+        self.screen_size = screen_size
+
         file = open(f"../assets/world/{level_folder_name}/world_data.json", "r")
         level_dictionary = json_load(file)
         file.close()
@@ -58,10 +59,10 @@ class World:
             bg_dict = {}
             bg_surf = pygame.image.load(f"../assets/world/{level_folder_name}/{surf_name}").convert()
             bg_dict["size"] = bg_surf.get_size()
-            marge_x = bg_dict["size"][0] - SCREEN_SIZE[0]
-            marge_y = bg_dict["size"][1] - SCREEN_SIZE[1]
-            max_travel_x = self.level_ground_surfaces["size"][0] - SCREEN_SIZE[0]
-            max_travel_y = self.level_ground_surfaces["size"][1] - SCREEN_SIZE[1]
+            marge_x = bg_dict["size"][0] - self.screen_size[0]
+            marge_y = bg_dict["size"][1] - self.screen_size[1]
+            max_travel_x = self.level_ground_surfaces["size"][0] - self.screen_size[0]
+            max_travel_y = self.level_ground_surfaces["size"][1] - self.screen_size[1]
             x_mult = marge_x / max_travel_x
             y_mult = marge_y / max_travel_y
             bg_dict["x_mult"] = x_mult

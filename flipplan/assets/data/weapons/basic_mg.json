@@ -1,0 +1,11 @@
+{
+  "start_rate_of_fire": 35,
+  "end_rate_of_fire": 5,
+  "start_spread": 1,
+  "end_spread": 6,
+  "time_before_overheat": 2,
+  "overheat_severity_exponent": 2,
+  "cooldown_rate": 1.25,
+  "projectile_speed": 1500,
+  "recoil": 5
+}

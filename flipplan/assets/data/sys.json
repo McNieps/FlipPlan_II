@@ -5,9 +5,9 @@
     "icon": true,
     "scaled": true
   },
-  "system": {
+  "video": {
     "fps": 120,
-    "IFI": 5
+    "ifi": 5
   },
   "audio": {
     "number_of_channels": 256

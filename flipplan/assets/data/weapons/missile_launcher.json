@@ -1,0 +1,6 @@
+{
+  "speed": 0,
+  "capacity": 4,
+  "recover_time": 2,
+  "speed_absorption_ratio": 0.5
+}

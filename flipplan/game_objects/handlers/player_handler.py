@@ -1,11 +1,10 @@
 from pygame.locals import *
 
-from flipplan.game_objects.handlers.projectile_handler import ProjectileHandler
 from flipplan.game_objects.players.player import Player
 
 
 class PlayerHandler:
-    def __init__(self, projectile_handler: ProjectileHandler):
+    def __init__(self, arena_handler):
         self.players = []
         self.number_of_players = 0
 
@@ -25,14 +24,15 @@ class PlayerHandler:
         for key in self.players_keys:
             self.key_state[key] = [False, False, False]
 
-        self.projectile_handler = projectile_handler
+        self.arena_handler = arena_handler
 
     def add_player(self):
         player_number = len(self.players) + 1
         self.number_of_players += 1
         player_x = 50
         player_y = 50
-        player = Player(player_number, player_x, player_y, "fat_player", self.projectile_handler)
+        player_img_dict = self.arena_handler.ressource_handler.images["player"]["small_player"]
+        player = Player(player_number, player_x, player_y, 0, player_img_dict, self.arena_handler)
 
         self.players.append(player)
 

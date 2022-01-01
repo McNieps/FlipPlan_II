@@ -1,11 +1,11 @@
 import pygame
 
-from src.engine.loop_handler import LoopHandler
+from flipplan.engine.handlers.loop_handler import LoopHandler
 
-from src.game.arena import arena
+from flipplan.game.arena import arena
 
 
-def menu(window):
+def menu(_window):
     loop_handler = LoopHandler()
 
     while loop_handler.is_running():
@@ -17,16 +17,19 @@ def menu(window):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     loop_handler.stop_loop()
-
-        # Call game
-        loop_handler = LoopHandler(arena(window))
+                if event.key == pygame.K_RETURN:
+                    # Call game
+                    loop_handler = LoopHandler(arena(_window))
 
         # Affichage
-        window.fill((255, 255, 255))
+        _window.fill((255, 255, 255))
         pygame.display.flip()
 
     return loop_handler.end_of_loop_return()
 
 
 if __name__ == '__main__':
-    print("menu")
+    from flipplan.engine.window import window
+
+    menu(window)
+    pygame.quit()

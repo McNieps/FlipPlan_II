@@ -1,13 +1,12 @@
 import pygame
-from .data import MAX_FPS
 
 
 class LoopHandler:
-    def __init__(self, stop=False):
+    def __init__(self, max_fps, stop=False):
         self.clock = pygame.time.Clock()
         self.run = not stop
         self.stop = stop
-        self.max_fps = MAX_FPS
+        self.max_fps = max_fps
         self.delta = 1/self.max_fps
 
     def is_running(self):

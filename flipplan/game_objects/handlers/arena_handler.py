@@ -1,28 +1,32 @@
 import pygame
 
+from flipplan.engine.camera import Camera
+from flipplan.engine.library import set_outline
+from flipplan.engine.handlers.ressource_handler import RessourceHandler
+
 from flipplan.game_objects.handlers.player_handler import PlayerHandler
 from flipplan.game_objects.handlers.projectile_handler import ProjectileHandler
 from flipplan.game_objects.world import World
-from flipplan.engine.library import set_outline
 
 # TODO RETIRER CES IMPORTS DE POUDZOUF
 from flipplan.game_objects.projectiles.ray_bullet import RayBullet
 from flipplan.game_objects.projectiles.missile import Missile
 
-from flipplan.engine.camera import Camera
-
 
 class ArenaHandler:
-    def __init__(self, window: pygame.Surface, number_of_players: int, level_name: str = "mountains"):
-        self.projectile_handler = ProjectileHandler()
-        self.player_handler = PlayerHandler(self.projectile_handler)
-        self.player_handler.add_players(number_of_players)
-        self.world = World(level_name)
+    def __init__(self, window: pygame.Surface, ressource_handler: RessourceHandler,
+                 number_of_players: int, level_name: str = "mountains"):
 
         self.window = window
-        self.camera = Camera(self.player_handler.players, self.world.level_size)
-        self.snd = pygame.mixer.Sound("../assets/sounds/explosion/loud_explosion.wav")
-        self.snd.set_volume(0.2)
+        self.ressource_handler = ressource_handler
+
+        self.projectile_handler = ProjectileHandler()
+        self.player_handler = PlayerHandler(self)
+        self.player_handler.add_players(number_of_players)
+
+        screen_size = self.ressource_handler.fetch_data(["system", "window", "size"])
+        self.world = World(screen_size, level_name)
+        self.camera = Camera(screen_size, self.player_handler.players, self.world.level_size)
 
     def update_event(self, event):
         self.player_handler.update_event(event)
@@ -59,14 +63,12 @@ class ArenaHandler:
                 print("Sorti du terrain")
                 player.set_position(50, 50, False)
                 player.set_speed(0, 0, False)
-                self.snd.play()
 
             if self.world.collide_ground_point_mask(player.rect.center):
                 # Ajouter player respawn
                 print("crash dans le terrain")
                 player.set_position(50, 50, False)
                 player.set_speed(0, 0, False)
-                self.snd.play()
 
                 self.world.dig_ground(player.rect.center, 20)
 

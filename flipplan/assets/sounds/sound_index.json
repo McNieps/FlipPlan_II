@@ -30,6 +30,8 @@
   },
 
   "misc": {
-
+    "misc_1": "ding.wav",
+    "misc_2": "small_ding.wav",
+    "misc_3": "strong_laser.wav"
   }
 }

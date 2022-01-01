@@ -1,12 +1,11 @@
 import pygame
 
-from src.engine.window import window
+from flipplan.engine.window import window
 
 # from src.game.menu import menu
 
 
 def main():
-    # menu(window)
     marche = True
     test_rect = pygame.Rect(100, 100, 20, 20)
 

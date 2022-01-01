@@ -1,25 +1,24 @@
 import pygame
 
-from flipplan.engine.data import SCREEN_SIZE
-
 
 class Camera:
-    def __init__(self, entities, world_border):
+    def __init__(self, screen_size, entities, world_border):
+        self.screen_size = screen_size
+
         self.entities = entities
 
         self.world_border = pygame.Rect(0, 0, 0, 0)
         self.world_border.size = world_border
         self.world_aspect = world_border[0] / world_border[1]
 
-        self.screen_aspect_ratio = SCREEN_SIZE[0] / SCREEN_SIZE[1]
-        self.screen_size = SCREEN_SIZE
+        self.screen_aspect_ratio = self.screen_size[0] / self.screen_size[1]
 
         self.screen_border_thickness = 50
-        sbp_width = (SCREEN_SIZE[0] - 2 * self.screen_border_thickness) / SCREEN_SIZE[0]   # screenborderpercentage
-        sbp_height = (SCREEN_SIZE[1] - 2 * self.screen_border_thickness) / SCREEN_SIZE[1]  # screenborderpercentage
+        sbp_width = (self.screen_size[0] - 2 * self.screen_border_thickness) / self.screen_size[0]
+        sbp_height = (self.screen_size[1] - 2 * self.screen_border_thickness) / self.screen_size[1]
 
         msm = 1  # min screen multiplier
-        self.min_rect_size = SCREEN_SIZE[0] * sbp_width * msm, SCREEN_SIZE[1] * sbp_height * msm
+        self.min_rect_size = self.screen_size[0] * sbp_width * msm, self.screen_size[1] * sbp_height * msm
         self.rect_aspect_ratio = self.min_rect_size[0] / self.min_rect_size[1]
 
         if self.world_aspect < self.screen_aspect_ratio:
@@ -120,7 +119,7 @@ class Camera:
         avg_x = sum_x / nb_e
         avg_y = sum_y / nb_e
 
-        rect = pygame.Rect(0, 0, SCREEN_SIZE[0], SCREEN_SIZE[1])
+        rect = pygame.Rect(0, 0, self.screen_size[0], self.screen_size[1])
         rect.center = (avg_x, avg_y)
 
         if rect.top < self.world_border.top:

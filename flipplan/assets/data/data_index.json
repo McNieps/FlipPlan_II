@@ -1,0 +1,13 @@
+{
+  "system": "sys.json",
+
+  "weapons": {
+    "basic_mg": "basic_mg.json",
+    "missile_launcher": "missile_launcher.json"
+  },
+
+  "projectiles": {
+    "ray_bullet": "ray_bullet.json",
+    "missile": "missile.json"
+  }
+}

@@ -7,7 +7,9 @@ from flipplan.game_objects.projectiles.missile import Missile
 
 
 class MissileLauncher:
-    def __init__(self, linked_plane, projectile_handler):
+    def __init__(self, linked_plane, arena_handler):
+        self.arena_handler = arena_handler
+
         # Weapon metadata
         self.gunshot_sound = pygame.mixer.Sound("../assets/sounds/weapons/missile_launcher/missile_launch_1.wav")
         self.gunshot_sound.set_volume(0.05)
@@ -24,7 +26,7 @@ class MissileLauncher:
         self.projectile_sound_launch.set_volume(0.05)
         self.projectile_sound_destroyed.set_volume(0.05)
         self.projectile_image.set_colorkey((0, 0, 0))
-        self.projectile_handler = projectile_handler
+        self.projectile_handler = self.arena_handler.projectile_handler
         self.projectile_initial_speed = None
         self.projectile_acceleration = None
         self.projectile_speed_distribution = None
@@ -87,16 +89,14 @@ class MissileLauncher:
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
 
-        projectile = self.projectile(self.linked_plane.player_number,
+        projectile = self.projectile(self.arena_handler,
+                                     self.linked_plane.player_number,
                                      self.linked_plane.x,
                                      self.linked_plane.y,
                                      pvx, pvy,
                                      self.linked_plane.a,
                                      self.projectile_acceleration,
-                                     "ampli", "frequence",
-                                     self.projectile_image,
-                                     self.projectile_sound_launch,
-                                     self.projectile_sound_destroyed)
+                                     "ampli", "frequence")
 
         # projectile.set_position(8, 0, True, True)
         self.projectile_handler.add_projectile(projectile)

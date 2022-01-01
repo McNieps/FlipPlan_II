@@ -8,10 +8,10 @@ from flipplan.game_objects.projectiles.ray_bullet import RayBullet
 
 
 class BasicMG:
-    def __init__(self, linked_plane, projectile_handler):
+    def __init__(self, linked_plane, arena_handler):
+        self.arena_handler = arena_handler
+
         # Weapon metadata
-        self.gunshot_sound = pygame.mixer.Sound("../assets/sounds/weapons/basic_mg/basic_shot_1.wav")
-        self.gunshot_sound.set_volume(0.05)
         self.start_rate_of_fire = None
         self.end_rate_of_fire = None
         self.diff_rate_of_fire = None
@@ -26,9 +26,9 @@ class BasicMG:
 
         # Projectile metadata
         self.projectile = RayBullet
-        self.projectile_image = pygame.image.load('../assets/images/projectiles/ray_bullet.png').convert_alpha()
+        self.projectile_image = self.arena_handler.ressource_handler.images["projectiles"]["ray_bullet"]
         self.projectile_initial_speed = None
-        self.projectile_handler = projectile_handler
+        self.projectile_handler = self.arena_handler.projectile_handler
 
         # Weapon state
         self.have_been_triggered = False
@@ -95,7 +95,7 @@ class BasicMG:
         self.time_since_fired += delta
 
     def shoot(self):
-        self.gunshot_sound.play()
+        self.arena_handler.ressource_handler.play_sound(["weapons", "basic_mg"])
         self.linked_plane.set_speed(-self.recoil, 0)
 
         rad = radians(self.linked_plane.a)

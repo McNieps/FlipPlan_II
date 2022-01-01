@@ -5,15 +5,15 @@ from math import radians, atan2, cos, sin
 
 
 class Missile(AbstractBullet):
-    def __init__(self, player_number, x, y, vx, vy, a, dvx, dva, fva, img, sound_launch, sound_destroyed):
+    def __init__(self, arena_handler, player_number, x, y, vx, vy, a, dvx, dva, fva):
         super().__init__(player_number, x, y, vx, vy)
+        self.arena_handler = arena_handler
         self.a = a
-        self.original_image = img
+        self.original_image = self.arena_handler.ressource_handler.images["projectiles"]["missile"]
         self.acceleration = dvx
         self.angle_variation_amplitude = dva
         self.angle_variation_frequency = fva
-        self.sound_channel = sound_launch.play()
-        self.sound_destroyed = sound_destroyed
+        self.sound_channel = self.arena_handler.ressource_handler.play_sound(["weapons", "missile_launcher"])
 
     def update(self, delta):
         rad = radians(self.a)
@@ -27,4 +27,4 @@ class Missile(AbstractBullet):
         self.update_position(delta)
 
     def on_death_event(self):
-        self.sound_channel.play(self.sound_destroyed)
+        self.arena_handler.ressource_handler.play_sound(["explosion"], self.sound_channel)

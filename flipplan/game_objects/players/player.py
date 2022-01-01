@@ -2,17 +2,20 @@ import pygame
 
 from math import radians, sin, cos
 from numpy import dot
+
 from flipplan.engine.opp import OPP
 from flipplan.game_objects.weapons.basic_mg import BasicMG
 from flipplan.game_objects.weapons.missile_launcher import MissileLauncher
 
 
 class Player:
-    def __init__(self, number, x, y, image_type, projectile_handler):
+    def __init__(self, number: int, x: float, y: float, a: float, image_dict: dict, arena_handler):
+        self.arena_handler = arena_handler
+
         # position and movement
         self.x = x
         self.y = y
-        self.a = 0
+        self.a = a
         self.vx = 0
         self.vy = 0
         self.va = 0
@@ -26,7 +29,7 @@ class Player:
         self.free_fall_length = 1  # sec
 
         # surface and masks
-        self.opp = OPP(image_type, 1)
+        self.opp = OPP(image_dict, 1)
         self.image = None
         self.rect = None
         self.mask = None
@@ -36,9 +39,8 @@ class Player:
         self.player_number = number
 
         # weapons
-        self.weapon_1 = BasicMG(self, projectile_handler)
-        self.weapon_2 = MissileLauncher(self, projectile_handler)
-        self.projectile_handler = projectile_handler
+        self.weapon_1 = BasicMG(self, self.arena_handler)
+        self.weapon_2 = MissileLauncher(self, self.arena_handler)
 
         # stats
         self.health = 100

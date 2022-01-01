@@ -1,13 +1,13 @@
 import pygame
 
-from flipplan.engine.loop_handler import LoopHandler
-from flipplan.engine.data import IFI
+from flipplan.engine.handlers.loop_handler import LoopHandler
 from flipplan.game_objects.handlers.arena_handler import ArenaHandler
 
 
-def arena(window, level_name="mountains"):
-    loop_handler = LoopHandler()
-    arena_handler = ArenaHandler(window, 1, level_name)
+def arena(_window, _ressource_handler, level_name="mountains"):
+    loop_handler = LoopHandler(_ressource_handler.fetch_data(["system", "video", "fps"]))
+    arena_handler = ArenaHandler(_window, _ressource_handler, 1, level_name)
+    ifi = _ressource_handler.fetch_data(["system", "video", "ifi"])
 
     while loop_handler.is_running():
         # loop_handler.print_fps()
@@ -22,8 +22,8 @@ def arena(window, level_name="mountains"):
                 if event.key == pygame.K_ESCAPE:
                     loop_handler.stop_loop()
 
-        for i in range(IFI):
-            arena_handler.update(delta / IFI)
+        for i in range(ifi):
+            arena_handler.update(delta / ifi)
 
         arena_handler.render()
         pygame.display.flip()
@@ -32,7 +32,6 @@ def arena(window, level_name="mountains"):
 
 
 if __name__ == "__main__":
-    from flipplan.engine.window import window as _window
-    pygame.init()
-    arena(_window)
+    from flipplan.engine.window import window, ressource_handler
+    arena(window, ressource_handler)
     pygame.quit()
