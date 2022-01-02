@@ -1,7 +1,4 @@
-import pygame
-
-from math import radians, cos, sin
-from json import load as json_load
+from math import degrees, radians, cos, sin, atan2
 from random import gauss
 
 from flipplan.game_objects.projectiles.ray_bullet import RayBullet
@@ -10,24 +7,28 @@ from flipplan.game_objects.projectiles.ray_bullet import RayBullet
 class BasicMG:
     def __init__(self, linked_plane, arena_handler):
         self.arena_handler = arena_handler
+        self.ressource_handler = self.arena_handler.ressource_handler
 
         # Weapon metadata
-        self.start_rate_of_fire = None
-        self.end_rate_of_fire = None
-        self.diff_rate_of_fire = None
-        self.start_spread = None
-        self.end_spread = None
-        self.diff_spread = None
-        self.time_before_overheat = None
-        self.overheat_severity_exponent = None
-        self.cooldown_rate = None
         self.linked_plane = linked_plane
-        self.recoil = None
+
+        self.start_rate_of_fire = 1 / self.ressource_handler.fetch_data(["weapons", "basic_mg", "start_rate_of_fire"])
+        self.end_rate_of_fire = 1 / self.ressource_handler.fetch_data(["weapons", "basic_mg", "end_rate_of_fire"])
+        self.diff_rate_of_fire = self.end_rate_of_fire - self.start_rate_of_fire
+
+        self.start_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "start_spread"]) * 1000
+        self.end_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "end_spread"]) * 1000
+        self.diff_spread = self.end_spread - self.start_spread
+
+        self.time_before_overheat = self.ressource_handler.fetch_data(["weapons", "basic_mg", "time_before_overheat"])
+        self.overheat_severity_exponent = self.ressource_handler.fetch_data(["weapons", "basic_mg", "overheat_severity_exponent"])
+        self.cooldown_rate = self.ressource_handler.fetch_data(["weapons", "basic_mg", "cooldown_rate"])
+
+        self.recoil = self.ressource_handler.fetch_data(["weapons", "basic_mg", "recoil"])
 
         # Projectile metadata
         self.projectile = RayBullet
-        self.projectile_image = self.arena_handler.ressource_handler.images["projectiles"]["ray_bullet"]
-        self.projectile_initial_speed = None
+        self.projectile_initial_speed = self.ressource_handler.fetch_data(["weapons", "basic_mg", "projectile_speed"])
         self.projectile_handler = self.arena_handler.projectile_handler
 
         # Weapon state
@@ -35,25 +36,6 @@ class BasicMG:
         self.weapon_time_spend_shooting = 0
         self.time_since_fired = 0
         self.time_excess = 0
-
-        self.load_values()
-
-    def load_values(self):
-        file = open("../game_objects/weapons/weapons.json")
-        dictionary = json_load(file)
-        file.close()
-
-        self.start_rate_of_fire = 1 / dictionary["basic_mg"]["start_rate_of_fire"]
-        self.end_rate_of_fire = 1 / dictionary["basic_mg"]["end_rate_of_fire"]
-        self.diff_rate_of_fire = self.end_rate_of_fire - self.start_rate_of_fire
-        self.start_spread = dictionary["basic_mg"]["start_spread"] * 1000
-        self.end_spread = dictionary["basic_mg"]["end_spread"] * 1000
-        self.diff_spread = self.end_spread - self.start_spread
-        self.time_before_overheat = dictionary["basic_mg"]["time_before_overheat"]
-        self.overheat_severity_exponent = dictionary["basic_mg"]["overheat_severity_exponent"]
-        self.cooldown_rate = dictionary["basic_mg"]["cooldown_rate"]
-        self.projectile_initial_speed = dictionary["basic_mg"]["projectile_speed"]
-        self.recoil = dictionary["basic_mg"]["recoil"]
 
     def get_overheat_coef(self):
         return (self.weapon_time_spend_shooting/self.time_before_overheat)**self.overheat_severity_exponent
@@ -101,15 +83,26 @@ class BasicMG:
         rad = radians(self.linked_plane.a)
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
+
         spread = self.start_spread + round(self.get_overheat_coef() * self.diff_spread)
         rspread = radians(gauss(0, spread) / 1000)
         sinspread = sin(rspread)
         cosspread = cos(rspread)
+
         pvx = pvx * cosspread - pvy * sinspread
         pvy = pvy * cosspread + pvx * sinspread
-        projectile = self.projectile(self.linked_plane.player_number,
-                                     self.linked_plane.x,
-                                     self.linked_plane.y,
-                                     pvx, pvy, self.projectile_image)
+
+        dvx = pvx - self.linked_plane.vx
+        dvy = pvy - self.linked_plane.vy
+
+        initial_pos = (self.linked_plane.x, self.linked_plane.y)
+        initial_speed = (pvx, pvy)
+        initial_a = degrees(atan2(dvy, dvx))
+
+        projectile = self.projectile(self.arena_handler,
+                                     self.linked_plane.player_number,
+                                     initial_pos, initial_speed, initial_a)
+
         projectile.set_position(8, 0, True, True)
+
         self.projectile_handler.add_projectile(projectile)

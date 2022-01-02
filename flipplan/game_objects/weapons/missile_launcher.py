@@ -36,7 +36,7 @@ class MissileLauncher:
         self.has_fired = False
         self.missiles_current_cooldown = 0
 
-        self.load_values()
+        # self.load_values()
 
     def load_values(self):
         file = open("../game_objects/weapons/weapons.json")
@@ -72,6 +72,7 @@ class MissileLauncher:
         self.missile_linked = None
 
     def reset(self, delta):
+        self.has_fired = True
         if not self.has_fired:
             if self.missiles_quantity < self.missiles_capacity:
                 self.missiles_current_cooldown += delta

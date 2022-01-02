@@ -41,13 +41,9 @@ class ArenaHandler:
 
         for projectile in self.projectile_handler.projectile_list:
             if not self.world.rect_in_level(projectile.rect):
-                projectile.leave_level()
+                projectile.leave_level()    # TODO ajouter delta ?
             elif pos := self.world.collide_ground_mask_mask(projectile.mask, projectile.rect):
-                projectile.hit_ground()
-                if type(projectile) == RayBullet:
-                    self.world.dig_ground(pos, 2)
-                if type(projectile) == Missile:
-                    self.world.dig_ground(pos, 20)
+                projectile.hit_ground(pos)
             else:
                 for player in self.player_handler.players:
                     if player.player_number != projectile.player_number:

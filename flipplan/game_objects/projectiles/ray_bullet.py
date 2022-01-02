@@ -1,23 +1,10 @@
-import pygame
-from math import degrees, atan2
-
 from flipplan.game_objects.projectiles.abstract_bullet import AbstractBullet
 
 
 class RayBullet(AbstractBullet):
-    def __init__(self, player_number, x, y, vx, vy, img):
-        super().__init__(player_number, x, y, vx, vy)
+    def __init__(self, arena_handler, player_number, initial_pos, initial_speed, initial_a):
+        super().__init__(arena_handler, player_number, initial_pos, initial_speed, initial_a)
 
-        # surface and mask
-        self.original_image = img
-        self.image = pygame.transform.rotate(self.original_image, -self.a)
-        self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def update(self, delta):
-        self.a = degrees(atan2(self.vy, self.vx))  # TODO faire ça tout les x temps
-        self.image = pygame.transform.rotate(self.original_image, -self.a)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.x, self.y
-        self.mask = pygame.mask.from_surface(self.image)
-        self.update_position(delta)
+        # Projectile image
+        self.original_image = self.ressource_handler.images["projectiles"]["ray_bullet"]
+        self.update_image_rect_mask()
