@@ -1,5 +1,8 @@
 {
   "acceleration": 800,
-  "angle_variation_amplitude": 2,
-  "angle_variation_frequency": 10
+  "wiggle_amplitude": 20,
+  "wiggle_period": 0.5,
+  "wiggle_acceleration": 1000,
+  "wiggle_friction": 0.5,
+  "ground_damage_radius": 20
 }

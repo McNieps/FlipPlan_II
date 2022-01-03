@@ -34,16 +34,19 @@ class AbstractBullet:
         self.y += self.vy * delta
 
     def update_angle(self, delta):
-        print("aaaa")
-        final_angle = degrees(atan2(self.vy, self.vx))
-        diff_angle = final_angle - self.a
-        BASE_ANGLE_SPEED = 90
+        self.a = self.a % 360
+        final_angle = degrees(atan2(self.vy, self.vx)) % 360
+        diff_angle = (final_angle - self.a) % 360
+
+        BASE_ANGLE_SPEED = 360       # TODO JSP
         gain_angle = BASE_ANGLE_SPEED * delta * sign(diff_angle)
+        if diff_angle > 180:
+            gain_angle = - gain_angle
 
         if abs(gain_angle) > abs(diff_angle):
             self.a = final_angle
         else:
-            self.a += gain_angle
+            self.a = (self.a + gain_angle) % 360
 
     def update_image_rect_mask(self):
         self.update_image()
@@ -62,7 +65,7 @@ class AbstractBullet:
 
     def update(self, delta):
         self.update_position(delta)
-        # self.update_angle(delta)
+        self.update_angle(delta)
         self.update_image_rect_mask()
 
     def set_position(self, x, y, increment=True, relative=False):
@@ -90,7 +93,7 @@ class AbstractBullet:
         self.number_of_hit_left = 0
 
     def on_death_event(self):
-        print("ABSTRACT_BULLET_DEATH_EVENT")
+        pass
 
     def null_function(self):
         pass

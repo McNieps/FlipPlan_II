@@ -8,10 +8,6 @@ from flipplan.game_objects.handlers.player_handler import PlayerHandler
 from flipplan.game_objects.handlers.projectile_handler import ProjectileHandler
 from flipplan.game_objects.world import World
 
-# TODO RETIRER CES IMPORTS DE POUDZOUF
-from flipplan.game_objects.projectiles.ray_bullet import RayBullet
-from flipplan.game_objects.projectiles.missile import Missile
-
 
 class ArenaHandler:
     def __init__(self, window: pygame.Surface, ressource_handler: RessourceHandler,

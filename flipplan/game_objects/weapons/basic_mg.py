@@ -16,8 +16,8 @@ class BasicMG:
         self.end_rate_of_fire = 1 / self.ressource_handler.fetch_data(["weapons", "basic_mg", "end_rate_of_fire"])
         self.diff_rate_of_fire = self.end_rate_of_fire - self.start_rate_of_fire
 
-        self.start_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "start_spread"]) * 1000
-        self.end_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "end_spread"]) * 1000
+        self.start_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "start_spread"])
+        self.end_spread = self.ressource_handler.fetch_data(["weapons", "basic_mg", "end_spread"])
         self.diff_spread = self.end_spread - self.start_spread
 
         self.time_before_overheat = self.ressource_handler.fetch_data(["weapons", "basic_mg", "time_before_overheat"])
@@ -80,24 +80,15 @@ class BasicMG:
         self.arena_handler.ressource_handler.play_sound(["weapons", "basic_mg"])
         self.linked_plane.set_speed(-self.recoil, 0)
 
-        rad = radians(self.linked_plane.a)
+        spread = self.start_spread + round(self.get_overheat_coef() * self.diff_spread)
+        rspread = radians(gauss(0, spread * 1000) / 1000)
+        rad = radians(self.linked_plane.a) + rspread
         pvx = self.linked_plane.vx + cos(rad) * self.projectile_initial_speed
         pvy = self.linked_plane.vy + sin(rad) * self.projectile_initial_speed
 
-        spread = self.start_spread + round(self.get_overheat_coef() * self.diff_spread)
-        rspread = radians(gauss(0, spread) / 1000)
-        sinspread = sin(rspread)
-        cosspread = cos(rspread)
-
-        pvx = pvx * cosspread - pvy * sinspread
-        pvy = pvy * cosspread + pvx * sinspread
-
-        dvx = pvx - self.linked_plane.vx
-        dvy = pvy - self.linked_plane.vy
-
         initial_pos = (self.linked_plane.x, self.linked_plane.y)
         initial_speed = (pvx, pvy)
-        initial_a = degrees(atan2(dvy, dvx))
+        initial_a = degrees(atan2(pvy - self.linked_plane.vy, pvx - self.linked_plane.vx))
 
         projectile = self.projectile(self.arena_handler,
                                      self.linked_plane.player_number,
